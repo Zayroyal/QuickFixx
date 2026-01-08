@@ -20,26 +20,6 @@ builder.Services.AddScoped<TicketServices>();
 
 var app = builder.Build();
 
-app.MapGet("/verify-second-ticket", async (TicketServices svc) =>
-{
-    var firstTicketId = await svc.CreateTicketAsync(
-        "Test User",
-        "555-000-1111",
-        "verify@test.com",
-        "First Ticket",
-        "Initial test ticket"
-    );
-
-    var secondTicketId = await svc.CreateTicketAsync(
-        "Test User",
-        "555-000-1111",
-        "verify@test.com",
-        "Second Ticket",
-        "Second test ticket triggers promotion"
-    );
-
-    return $"Workflow verified. Ticket IDs: {firstTicketId}, {secondTicketId}";
-});
 
 
 
