@@ -1,19 +1,21 @@
-﻿namespace BlazorApp2.Data.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace BlazorApp2.Data.Models;
 
 public class Ticket
 {
-    public int ID { get; set; }
+    public int Id { get; set; }
 
-    [Required]
+    public int? CustomerId { get; set; }
+    public Customer? Customer { get; set; }
 
-    public string Title { get; set; } = "";
-
+    [Required] public string Title { get; set; } = "";
     public string? Description { get; set; }
 
+    // snapshots for history
+    public string? CustomerNameSnapshot { get; set; }
+    public string? CustomerContactSnapshot { get; set; }
+    public string? CustomerEmailSnapshot { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-
-
 }

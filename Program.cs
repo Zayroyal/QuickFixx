@@ -1,6 +1,8 @@
 using BlazorApp2.Components;
 using BlazorApp2.Data;
 using Microsoft.EntityFrameworkCore;
+using BlazorApp2.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,29 +14,34 @@ builder.Services.AddRazorComponents()
 builder.Services.AddDbContext<QuickFixDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("QuickFixDb")));
 
+builder.Services.AddScoped<TicketServices>();
+
+
+
 var app = builder.Build();
 
-// ADDED: auto-create SQLite database + tables if they don't exist
-using (var scope = app.Services.CreateScope())
+app.MapGet("/verify-second-ticket", async (TicketServices svc) =>
 {
-    var db = scope.ServiceProvider.GetRequiredService<QuickFixDbContext>();
-    db.Database.EnsureCreated();
-}
+    var firstTicketId = await svc.CreateTicketAsync(
+        "Test User",
+        "555-000-1111",
+        "verify@test.com",
+        "First Ticket",
+        "Initial test ticket"
+    );
 
-//  MapGet must be AFTER app is built
-app.MapGet("/db-test", async (QuickFixDbContext db) =>
-{
-    db.Tickets.Add(new BlazorApp2.Data.Models.Ticket
-    {
-        Title = "First QuickFix Ticket",
-        Description = "SQLite write test"
-    });
+    var secondTicketId = await svc.CreateTicketAsync(
+        "Test User",
+        "555-000-1111",
+        "verify@test.com",
+        "Second Ticket",
+        "Second test ticket triggers promotion"
+    );
 
-    await db.SaveChangesAsync();
-
-    var count = await db.Tickets.CountAsync();
-    return $"SQLite write OK. Ticket count = {count}";
+    return $"Workflow verified. Ticket IDs: {firstTicketId}, {secondTicketId}";
 });
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
