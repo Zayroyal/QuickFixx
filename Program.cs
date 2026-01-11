@@ -18,6 +18,7 @@ builder.Services.AddScoped<TicketServices>();
 
 
 
+
 var app = builder.Build();
 
 
