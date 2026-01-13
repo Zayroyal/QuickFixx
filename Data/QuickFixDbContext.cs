@@ -9,6 +9,7 @@ public class QuickFixDbContext : DbContext
 
     public DbSet<Ticket> Tickets => Set<Ticket>();
     public DbSet<Repair> Repairs => Set<Repair>();
+    public DbSet<AppUser> Users => Set<AppUser>();
 
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<FirstTimeCustomer> FirstTimeCustomers => Set<FirstTimeCustomer>();
@@ -16,6 +17,9 @@ public class QuickFixDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<AppUser>()
+    .HasIndex(u => u.Email)
+    .IsUnique();
 
         modelBuilder.Entity<Customer>()
             .HasIndex(c => c.Email)
