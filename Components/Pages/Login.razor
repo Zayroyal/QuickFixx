@@ -1,0 +1,47 @@
+﻿@page "/login"
+
+@inject BlazorApp2.Services.AuthService Auth
+@inject BlazorApp2.Auth.SessionAuthStateProvider SessionAuth
+@inject NavigationManager Nav
+
+<h1 class="qf-title">Login</h1>
+
+<div class="qf-card">
+    <input class="qf-input" placeholder="Email" @bind="Email" />
+    <input class="qf-input" placeholder="Password" type="password" @bind="Password" />
+
+    @if (!string.IsNullOrWhiteSpace(Error))
+    {
+        <div class="qf-error">@Error</div>
+    }
+
+    <button class="qf-btn" @onclick="HandleLogin">Login</button>
+
+    <div style="margin-top: 12px;">
+        <NavLink href="/create-account">Create Account</NavLink>
+
+    </div>
+</div>
+
+@code {
+    private string Email = "";
+    private string Password = "";
+    private string Error = "";
+
+    private async Task HandleLogin()
+    {
+        Error = "";
+
+        var user = await Auth.LoginAsync(Email, Password);
+        if (user == null)
+        {
+            Error = "Invalid login.";
+            return;
+        }
+
+        await SessionAuth.SignInAsync(user.Id);
+
+        // send them into your app
+        Nav.NavigateTo("/" );
+    }
+}

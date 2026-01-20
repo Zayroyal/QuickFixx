@@ -1,3 +1,6 @@
+@import url("css/home.css");
+
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -57,4 +60,42 @@ h1:focus {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
+}
+.qf-title {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.qf-card {
+    width: min(420px, 92vw);
+    margin: 18px auto;
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 10px 22px rgba(0,0,0,.08);
+    background: #fff;
+    display: grid;
+    gap: 10px;
+}
+
+.qf-input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.qf-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: #2f6fff;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.qf-error {
+    color: #b00020;
 }

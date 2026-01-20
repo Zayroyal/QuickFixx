@@ -1,7 +1,39 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject BlazorApp2.Services.AuthService Auth
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1 class="home-title">Welcome, @DisplayName</h1>
 
-Welcome to your new app.
+<p class="home-sub">
+    You're logged in!!!
+</p>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+    private string DisplayName = "User";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await (AuthenticationStateTask
+            ?? Task.FromResult(new AuthenticationState(new ClaimsPrincipal())));
+
+        var principal = authState.User;
+
+        // We store the user Id in this claim (you already do this in SessionAuthStateProvider)
+        var idText = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!int.TryParse(idText, out var userId) || userId <= 0)
+            return;
+
+        // Pull the real user row from the DB and use Name
+        var dbUser = await Auth.GetByIdAsync(userId);
+
+        if (dbUser != null && !string.IsNullOrWhiteSpace(dbUser.Name))
+            DisplayName = dbUser.Name.Trim();
+    }
+}

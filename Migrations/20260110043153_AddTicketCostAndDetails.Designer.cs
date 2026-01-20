@@ -3,6 +3,7 @@ using System;
 using BlazorApp2.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,48 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorApp2.Migrations
 {
     [DbContext(typeof(QuickFixDbContext))]
-    partial class QuickFixDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260110043153_AddTicketCostAndDetails")]
+    partial class AddTicketCostAndDetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
-
-            modelBuilder.Entity("BlazorApp2.Data.Models.AppUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("LastLoginUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<byte[]>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
-
-                    b.Property<byte[]>("PasswordSalt")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.ToTable("Users");
-                });
 
             modelBuilder.Entity("BlazorApp2.Data.Models.Customer", b =>
                 {
@@ -148,9 +115,6 @@ namespace BlazorApp2.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("CreatedByUserId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("CustomerContactSnapshot")
                         .HasColumnType("TEXT");

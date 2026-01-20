@@ -1,0 +1,15 @@
+﻿@inject NavigationManager Nav
+
+@code {
+    protected override void OnInitialized()
+    {
+        var path = new Uri(Nav.Uri).AbsolutePath.ToLowerInvariant();
+
+        // prevent redirect loop
+        if (path != "/login")
+        {
+            Nav.NavigateTo("/login", replace: true);
+        }
+    }
+}
+

@@ -9,6 +9,9 @@ public class Ticket
     public int? CustomerId { get; set; }
     public Customer? Customer { get; set; }
 
+    // NEW: link ticket to the logged-in app user
+    public int CreatedByUserId { get; set; }
+
     [Required] public string Title { get; set; } = "";
     public string? Description { get; set; }
 
@@ -16,6 +19,15 @@ public class Ticket
     public string? CustomerNameSnapshot { get; set; }
     public string? CustomerContactSnapshot { get; set; }
     public string? CustomerEmailSnapshot { get; set; }
-
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    // Ticket detail fields (Web UI)
+    public string? DeviceType { get; set; }
+    public string? Diagnostic { get; set; }
+
+    // Cost fields
+    public decimal PartsCost { get; set; }
+    public decimal LaborCost { get; set; }
+    public decimal DiagnosticFee { get; set; }
+    public decimal TotalCost { get; set; }
 }

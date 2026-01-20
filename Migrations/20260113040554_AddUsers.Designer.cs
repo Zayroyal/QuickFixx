@@ -3,6 +3,7 @@ using System;
 using BlazorApp2.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorApp2.Migrations
 {
     [DbContext(typeof(QuickFixDbContext))]
-    partial class QuickFixDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260113040554_AddUsers")]
+    partial class AddUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
@@ -31,10 +34,6 @@ namespace BlazorApp2.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("LastLoginUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("PasswordHash")
@@ -148,9 +147,6 @@ namespace BlazorApp2.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("CreatedByUserId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("CustomerContactSnapshot")
                         .HasColumnType("TEXT");

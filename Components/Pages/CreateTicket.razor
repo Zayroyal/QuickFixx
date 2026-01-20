@@ -1,0 +1,152 @@
+﻿@page "/tickets/new"
+@using BlazorApp2.Models
+@using BlazorApp2.Services
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject TicketServices TicketService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<h2>Create Ticket</h2>
+
+<div class="card p-3" style="max-width: 900px;">
+    <EditForm Model="_form" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="row g-3">
+
+            <div class="col-12 col-md-6">
+                <h5>Customer</h5>
+
+                <label class="form-label">Name</label>
+                <InputText class="form-control" @bind-Value="_form.CustomerName" />
+
+                <label class="form-label mt-2">Phone Number</label>
+                <InputText class="form-control" @bind-Value="_form.Contact" />
+
+                <label class="form-label mt-2">Email</label>
+                <InputText class="form-control" @bind-Value="_form.Email" />
+            </div>
+
+            <div class="col-12 col-md-6">
+                <h5>Ticket</h5>
+
+                <label class="form-label">Title</label>
+                <InputText class="form-control" @bind-Value="_form.Title" />
+
+                <label class="form-label mt-2">Device / Type</label>
+                <InputText class="form-control" @bind-Value="_form.DeviceType" />
+
+                <label class="form-label mt-2">Diagnostic</label>
+                <InputSelect class="form-select" @bind-Value="_form.Diagnostic">
+                    <option value="">-- Select --</option>
+                    <option>Cracked Screen</option>
+                    <option>Battery Issue</option>
+                    <option>Water Damage</option>
+                    <option>Boot Loop</option>
+                    <option>Charging Port</option>
+                    <option>Camera Failure</option>
+                </InputSelect>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Issue / Description</label>
+                <InputTextArea class="form-control" rows="5" @bind-Value="_form.Description" />
+            </div>
+
+            <div class="col-12">
+                <h5>Costs</h5>
+            </div>
+
+            <div class="col-12 col-md-3">
+                <label class="form-label">Parts $</label>
+                <InputNumber class="form-control" @bind-Value="_form.PartsCost" />
+            </div>
+
+            <div class="col-12 col-md-3">
+                <label class="form-label">Labor $</label>
+                <InputNumber class="form-control" @bind-Value="_form.LaborCost" />
+            </div>
+
+            <div class="col-12 col-md-3">
+                <label class="form-label">Diagnostic Fee $</label>
+                <InputNumber class="form-control" @bind-Value="_form.DiagnosticFee" />
+            </div>
+
+            <div class="col-12 col-md-3">
+                <label class="form-label">Total $</label>
+                <input class="form-control" value="@TotalCost" readonly />
+                <small class="text-muted">Auto-calculated</small>
+            </div>
+
+            <div class="col-12 d-flex gap-2 mt-3">
+                <button class="btn btn-primary" type="submit" disabled="@_submitting">
+                    @(_submitting ? "Creating..." : "Create Ticket")
+                </button>
+
+                @if (!string.IsNullOrWhiteSpace(_result))
+                {
+                    <span class="align-self-center">@_result</span>
+                }
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    private readonly CreateTicketFormModel _form = new();
+    private bool _submitting = false;
+    private string? _result;
+
+    private decimal TotalCost => _form.PartsCost + _form.LaborCost + _form.DiagnosticFee;
+
+    private async Task<int> GetLoggedInUserId()
+    {
+        var state = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = state.User;
+
+        var idStr = user.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (int.TryParse(idStr, out var id) && id > 0)
+            return id;
+
+        throw new InvalidOperationException("No logged-in user id found.");
+    }
+
+    private async Task HandleSubmit()
+    {
+        _submitting = true;
+        _result = null;
+
+        try
+        {
+            var userId = await GetLoggedInUserId();
+
+            var ticketId = await TicketService.CreateTicketWithCostAsync(
+                userId,
+                _form.CustomerName,
+                _form.Contact,
+                _form.Email,
+                _form.Title,
+                _form.Description,
+                _form.DeviceType,
+                _form.Diagnostic,
+                _form.PartsCost,
+                _form.LaborCost,
+                _form.DiagnosticFee,
+                TotalCost
+            );
+
+            _result = $"✅ Ticket created. ID = {ticketId}";
+        }
+        catch (Exception ex)
+        {
+            _result = $"❌ Error: {ex.Message}";
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+}
