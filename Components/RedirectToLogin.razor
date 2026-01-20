@@ -3,6 +3,13 @@
 @code {
     protected override void OnInitialized()
     {
-        Nav.NavigateTo("/login", true);
+        var path = new Uri(Nav.Uri).AbsolutePath.ToLowerInvariant();
+
+        // prevent redirect loop
+        if (path != "/login")
+        {
+            Nav.NavigateTo("/login", replace: true);
+        }
     }
 }
+

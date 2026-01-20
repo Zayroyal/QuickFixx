@@ -1,0 +1,62 @@
+﻿@page "/create-account"
+
+@inject BlazorApp2.Services.AuthService Auth
+@inject BlazorApp2.Auth.SessionAuthStateProvider SessionAuth
+@inject NavigationManager Nav
+
+<h1 class="qf-title">Create Account</h1>
+
+<div class="qf-card">
+    <input class="qf-input" placeholder="Name" @bind="Name" />
+    <input class="qf-input" placeholder="Email" @bind="Email" />
+
+    <!--Phone will be here-->
+
+
+    <input class="qf-input" placeholder="Password" type="password" @bind="Password" />
+
+    @if (!string.IsNullOrWhiteSpace(Error))
+    {
+        <div class="qf-error">@Error</div>
+    }
+
+    <button class="qf-btn" @onclick="HandleCreate">Create Account</button>
+
+    <div style="margin-top: 12px;">
+        <a href="/login">Back to Login</a>
+    </div>
+</div>
+
+@code {
+    private string Name = "";
+    private string Email = "";
+    private string Password = "";
+    private string Error = "";
+
+    private async Task HandleCreate()
+    {
+        Error = "";
+
+        if (string.IsNullOrWhiteSpace(Name) ||
+            string.IsNullOrWhiteSpace(Email) ||
+            string.IsNullOrWhiteSpace(Password))
+        {
+            Error = "Please fill out all fields.";
+            return;
+        }
+
+        var result = await Auth.RegisterAsync(Name, Email, Password); // UPDATED
+
+        if (!result.ok || result.user == null)
+        {
+            Error = string.IsNullOrWhiteSpace(result.error)
+                ? "Could not create account."
+                : result.error;
+            return;
+        }
+
+        await SessionAuth.SignInAsync(result.user.Id);
+
+        Nav.NavigateTo("/");
+    }
+}

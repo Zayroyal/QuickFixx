@@ -22,6 +22,7 @@ public class TicketServices
     /// - 2nd ticket with same email -> promote/move to Customers, remove from FirstTimeCustomers
     /// </summary>
     public async Task<int> CreateTicketAsync(
+        int createdByUserId, // NEW: logged-in user id
         string customerName,
         string customerContact,
         string customerEmail,
@@ -92,6 +93,7 @@ public class TicketServices
         // 3) Create ticket (link only if customer exists/promoted)
         var ticket = new Ticket
         {
+            CreatedByUserId = createdByUserId, // NEW: store the logged-in user id
             CustomerId = linkCustomerId,
             Title = title,
             Description = description,
@@ -123,18 +125,20 @@ public class TicketServices
               .Include(t => t.Customer)
               .OrderByDescending(t => t.CreatedAt)
               .ToListAsync();
+
     public async Task<int> CreateTicketWithCostAsync(
-    string customerName,
-    string customerContact,
-    string customerEmail,
-    string title,
-    string? description,
-    string? deviceType,
-    string? diagnostic,
-    decimal partsCost,
-    decimal laborCost,
-    decimal diagnosticFee,
-    decimal totalCost)
+        int createdByUserId, // NEW: logged-in user id
+        string customerName,
+        string customerContact,
+        string customerEmail,
+        string title,
+        string? description,
+        string? deviceType,
+        string? diagnostic,
+        decimal partsCost,
+        decimal laborCost,
+        decimal diagnosticFee,
+        decimal totalCost)
     {
         customerEmail = customerEmail.Trim().ToLowerInvariant();
 
@@ -195,6 +199,7 @@ public class TicketServices
 
         var ticket = new Ticket
         {
+            CreatedByUserId = createdByUserId, // NEW: store the logged-in user id
             CustomerId = linkCustomerId,
 
             Title = title,
@@ -230,5 +235,4 @@ public class TicketServices
         await tx.CommitAsync();
         return ticket.Id;
     }
-
 }

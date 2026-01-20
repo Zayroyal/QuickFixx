@@ -1,10 +1,11 @@
 ﻿@page "/tickets/new"
 @using BlazorApp2.Models
 @using BlazorApp2.Services
-@inject TicketServices TicketService
 @using Microsoft.AspNetCore.Authorization
-
-
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject TicketServices TicketService
+@inject AuthenticationStateProvider AuthStateProvider
 
 <h2>Create Ticket</h2>
 
@@ -21,7 +22,7 @@
                 <label class="form-label">Name</label>
                 <InputText class="form-control" @bind-Value="_form.CustomerName" />
 
-                <label class="form-label mt-2">Contact</label>
+                <label class="form-label mt-2">Phone Number</label>
                 <InputText class="form-control" @bind-Value="_form.Contact" />
 
                 <label class="form-label mt-2">Email</label>
@@ -100,6 +101,19 @@
 
     private decimal TotalCost => _form.PartsCost + _form.LaborCost + _form.DiagnosticFee;
 
+    private async Task<int> GetLoggedInUserId()
+    {
+        var state = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = state.User;
+
+        var idStr = user.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (int.TryParse(idStr, out var id) && id > 0)
+            return id;
+
+        throw new InvalidOperationException("No logged-in user id found.");
+    }
+
     private async Task HandleSubmit()
     {
         _submitting = true;
@@ -107,7 +121,10 @@
 
         try
         {
+            var userId = await GetLoggedInUserId();
+
             var ticketId = await TicketService.CreateTicketWithCostAsync(
+                userId,
                 _form.CustomerName,
                 _form.Contact,
                 _form.Email,

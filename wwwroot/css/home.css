@@ -1,0 +1,13 @@
+﻿.home-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 12px;
+    margin-bottom: 10px;
+}
+
+.home-sub {
+    font-size: 1rem;
+    opacity: 0.85;
+    max-width: 720px;
+    line-height: 1.4;
+}

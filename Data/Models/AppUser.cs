@@ -4,6 +4,8 @@
     {
         public int Id { get; set; }
 
+        public string Name { get; set; } = ""; // ADDED: display name for Welcome message
+
         public string Email { get; set; } = "";
 
         public byte[] PasswordHash { get; set; } = System.Array.Empty<byte>();

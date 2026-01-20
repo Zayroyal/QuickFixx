@@ -16,6 +16,11 @@
     }
 
     <button class="qf-btn" @onclick="HandleLogin">Login</button>
+
+    <div style="margin-top: 12px;">
+        <NavLink href="/create-account">Create Account</NavLink>
+
+    </div>
 </div>
 
 @code {
@@ -27,7 +32,7 @@
     {
         Error = "";
 
-        var user = await Auth.LoginOrCreateAsync(Email, Password);
+        var user = await Auth.LoginAsync(Email, Password);
         if (user == null)
         {
             Error = "Invalid login.";
@@ -37,6 +42,6 @@
         await SessionAuth.SignInAsync(user.Id);
 
         // send them into your app
-        Nav.NavigateTo("/", true);
+        Nav.NavigateTo("/" );
     }
 }
