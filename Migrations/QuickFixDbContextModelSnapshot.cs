@@ -63,8 +63,7 @@ namespace BlazorApp2.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                 
 
                     b.Property<int>("CustomerIdDate")
                         .HasColumnType("INTEGER");

@@ -8,11 +8,17 @@ public class FirstTimeCustomer
 
     public int CustomerIdDate { get; set; } // yyyyMMdd
 
-    [Required] public string Name { get; set; } = "";
-    [Required] public string Contact { get; set; } = "";
+    [Required]
+    public string Name { get; set; } = "";
+
+    [Required]
+    public string Contact { get; set; } = "";
 
     [Required, EmailAddress]
     public string Email { get; set; } = "";
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    // IMPORTANT:
+    // Your SQLite table column is named "Created" and is NOT NULL,
+    // so the model must match that exact name.
+    public DateTime Created { get; set; } = DateTime.UtcNow;
 }

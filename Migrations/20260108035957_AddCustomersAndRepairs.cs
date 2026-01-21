@@ -50,7 +50,7 @@ namespace BlazorApp2.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Contact = table.Column<string>(type: "TEXT", nullable: false),
                     Email = table.Column<string>(type: "TEXT", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                   
                 },
                 constraints: table =>
                 {
@@ -67,7 +67,7 @@ namespace BlazorApp2.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Contact = table.Column<string>(type: "TEXT", nullable: false),
                     Email = table.Column<string>(type: "TEXT", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    
                 },
                 constraints: table =>
                 {

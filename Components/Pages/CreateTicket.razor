@@ -1,11 +1,12 @@
 ﻿@page "/tickets/new"
 @using BlazorApp2.Models
 @using BlazorApp2.Services
-@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
 @inject TicketServices TicketService
 @inject AuthenticationStateProvider AuthStateProvider
+@inject DeviceCatalogService DeviceCatalog
+@inject GradeAPricingService GradeAPricing
 
 <h2>Create Ticket</h2>
 
@@ -20,26 +21,33 @@
                 <h5>Customer</h5>
 
                 <label class="form-label">Name</label>
-                <InputText class="form-control" @bind-Value="_form.CustomerName" />
+                <input class="form-control" @bind="_form.CustomerName" @bind:event="oninput" />
 
                 <label class="form-label mt-2">Phone Number</label>
-                <InputText class="form-control" @bind-Value="_form.Contact" />
+                <input class="form-control" @bind="_form.Contact" @bind:event="oninput" />
 
                 <label class="form-label mt-2">Email</label>
-                <InputText class="form-control" @bind-Value="_form.Email" />
+                <input class="form-control" @bind="_form.Email" @bind:event="oninput" />
             </div>
 
             <div class="col-12 col-md-6">
                 <h5>Ticket</h5>
 
-                <label class="form-label">Title</label>
-                <InputText class="form-control" @bind-Value="_form.Title" />
-
-                <label class="form-label mt-2">Device / Type</label>
-                <InputText class="form-control" @bind-Value="_form.DeviceType" />
+                <label class="form-label mt-2">Device Model</label>
+                <InputSelect class="form-select"
+                             @bind-Value="_form.DeviceType"
+                             @bind-Value:after="RecalcCostsAsync">
+                    <option value="">-- Select --</option>
+                    @foreach (var m in _deviceModels)
+                    {
+                        <option value="@m">@m</option>
+                    }
+                </InputSelect>
 
                 <label class="form-label mt-2">Diagnostic</label>
-                <InputSelect class="form-select" @bind-Value="_form.Diagnostic">
+                <InputSelect class="form-select"
+                             @bind-Value="_form.Diagnostic"
+                             @bind-Value:after="RecalcCostsAsync">
                     <option value="">-- Select --</option>
                     <option>Cracked Screen</option>
                     <option>Battery Issue</option>
@@ -47,12 +55,15 @@
                     <option>Boot Loop</option>
                     <option>Charging Port</option>
                     <option>Camera Failure</option>
+                    <option>Laptop Screen</option>
+                    <option>Website Build</option>
+                    <option>Website Bug Fix</option>
                 </InputSelect>
             </div>
 
             <div class="col-12">
                 <label class="form-label">Issue / Description</label>
-                <InputTextArea class="form-control" rows="5" @bind-Value="_form.Description" />
+                <textarea class="form-control" rows="5" @bind="_form.Description" @bind:event="oninput"></textarea>
             </div>
 
             <div class="col-12">
@@ -61,17 +72,22 @@
 
             <div class="col-12 col-md-3">
                 <label class="form-label">Parts $</label>
-                <InputNumber class="form-control" @bind-Value="_form.PartsCost" />
+                <input class="form-control" value="@_form.PartsCost" readonly />
+                @if (!string.IsNullOrWhiteSpace(_partInfo))
+                {
+                    <small class="text-muted">@_partInfo</small>
+                }
             </div>
 
             <div class="col-12 col-md-3">
                 <label class="form-label">Labor $</label>
-                <InputNumber class="form-control" @bind-Value="_form.LaborCost" />
+                <input class="form-control" value="@_form.LaborCost" readonly />
             </div>
 
             <div class="col-12 col-md-3">
                 <label class="form-label">Diagnostic Fee $</label>
-                <InputNumber class="form-control" @bind-Value="_form.DiagnosticFee" />
+                <input class="form-control" value="25" readonly />
+                <small class="text-muted">Always $25</small>
             </div>
 
             <div class="col-12 col-md-3">
@@ -90,6 +106,7 @@
                     <span class="align-self-center">@_result</span>
                 }
             </div>
+
         </div>
     </EditForm>
 </div>
@@ -99,7 +116,30 @@
     private bool _submitting = false;
     private string? _result;
 
-    private decimal TotalCost => _form.PartsCost + _form.LaborCost + _form.DiagnosticFee;
+    private List<string> _deviceModels = new();
+    private string? _partInfo;
+
+    private const decimal DIAGNOSTIC_FEE = 25m;
+    private decimal TotalCost => _form.PartsCost + _form.LaborCost + DIAGNOSTIC_FEE;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _deviceModels = await DeviceCatalog.GetAllModelsAsync();
+        await RecalcCostsAsync();
+    }
+
+    // ✅ ONLY CHANGE: Recalc runs AFTER bind updates now (so it uses the new values)
+    private async Task RecalcCostsAsync()
+    {
+        var pricing = await GradeAPricing.GetPricingAsync(_form.DeviceType, _form.Diagnostic);
+
+        _form.PartsCost = pricing.PartsCost;
+        _form.LaborCost = pricing.LaborCost;
+
+        _partInfo = string.IsNullOrWhiteSpace(pricing.PartName)
+            ? null
+            : $"{pricing.PartGrade} Part: {pricing.PartName}";
+    }
 
     private async Task<int> GetLoggedInUserId()
     {
@@ -128,21 +168,21 @@
                 _form.CustomerName,
                 _form.Contact,
                 _form.Email,
-                _form.Title,
                 _form.Description,
                 _form.DeviceType,
                 _form.Diagnostic,
                 _form.PartsCost,
-                _form.LaborCost,
-                _form.DiagnosticFee,
-                TotalCost
+                _form.LaborCost
             );
 
             _result = $"✅ Ticket created. ID = {ticketId}";
         }
         catch (Exception ex)
         {
-            _result = $"❌ Error: {ex.Message}";
+            var inner = ex.InnerException?.Message;
+            _result = inner is null
+                ? $"❌ Error: {ex.Message}"
+                : $"❌ Error: {ex.Message} | Inner: {inner}";
         }
         finally
         {

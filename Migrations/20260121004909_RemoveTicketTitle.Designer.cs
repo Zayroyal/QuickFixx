@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorApp2.Migrations
 {
     [DbContext(typeof(QuickFixDbContext))]
-    [Migration("20260120033027_AddTicketCreatedByUserId")]
-    partial class AddTicketCreatedByUserId
+    [Migration("20260121004909_RemoveTicketTitle")]
+    partial class RemoveTicketTitle
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,6 +34,10 @@ namespace BlazorApp2.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("LastLoginUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("PasswordHash")
@@ -62,8 +66,7 @@ namespace BlazorApp2.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                    
 
                     b.Property<int>("CustomerIdDate")
                         .HasColumnType("INTEGER");
@@ -94,7 +97,7 @@ namespace BlazorApp2.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                 
+
                     b.Property<int>("CustomerIdDate")
                         .HasColumnType("INTEGER");
 
@@ -120,7 +123,6 @@ namespace BlazorApp2.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -141,6 +143,9 @@ namespace BlazorApp2.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    
+                       
 
                     b.Property<int>("CreatedByUserId")
                         .HasColumnType("INTEGER");

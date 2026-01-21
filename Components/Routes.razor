@@ -13,7 +13,7 @@
             {
                 <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)">
                     <NotAuthorized>
-                        <RedirectToLogin />
+                        <RedirectToLogin /> // If Not Logged in , Redict to Login Page !!!
                     </NotAuthorized>
                 </AuthorizeRouteView>
             }

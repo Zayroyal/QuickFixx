@@ -1,0 +1,605 @@
+{
+  "version": 1,
+  "currency": "USD",
+
+  "rules": [
+   
+    {
+      "deviceContains": "Apple - iPhone - iPhone 8",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "iPhone 8 Screen (Grade A)",
+        "price": 49.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 110.0 }
+    },
+    {
+      "deviceContains": "Apple - iPhone - iPhone 8",
+      "diagnostic": "Battery Issue",
+      "part": {
+        "grade": "A",
+        "name": "iPhone 8 Battery (Grade A)",
+        "price": 24.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 75.0 }
+    },
+
+    {
+      "deviceContains": "Apple - iPhone - iPhone X",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "iPhone X Screen (Grade A)",
+        "price": 69.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 125.0 }
+    },
+    {
+      "deviceContains": "Apple - iPhone - iPhone 11",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "iPhone 11 Screen (Grade A)",
+        "price": 79.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 130.0 }
+    },
+
+    {
+      "deviceContains": "Apple - iPhone - iPhone 12",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "iPhone 12 Screen (Grade A)",
+        "price": 109.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 150.0 }
+    },
+    {
+      "deviceContains": "Apple - iPhone - iPhone 13",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "iPhone 13 Screen (Grade A)",
+        "price": 119.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 155.0 }
+    },
+
+    {
+      "deviceContains": "Apple - iPhone - iPhone 14",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "iPhone 14 Screen (Grade A)",
+        "price": 139.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 170.0 }
+    },
+    {
+      "deviceContains": "Apple - iPhone - iPhone 15",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "iPhone 15 Screen (Grade A)",
+        "price": 159.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 180.0 }
+    },
+
+    {
+      "deviceContains": "Apple - iPhone - iPhone 16",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "iPhone 16 Screen (Grade A)",
+        "price": 179.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 200.0 }
+    },
+    {
+      "deviceContains": "Apple - iPhone - iPhone 17",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "iPhone 17 Screen (Grade A)",
+        "price": 199.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 220.0 }
+    },
+
+  
+    {
+      "category": "Apple - iPhone",
+      "diagnostic": "Charging Port",
+      "part": {
+        "grade": "A",
+        "name": "iPhone Charging Port Flex (Grade A)",
+        "price": 29.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 120.0 }
+    },
+    {
+      "category": "Apple - iPhone",
+      "diagnostic": "Camera Failure",
+      "part": {
+        "grade": "A",
+        "name": "iPhone Camera Module (Grade A)",
+        "price": 59.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 130.0 }
+    },
+    {
+      "category": "Apple - iPhone",
+      "diagnostic": "Water Damage",
+      "part": {
+        "grade": "A",
+        "name": "Cleaning Materials (Grade A)",
+        "price": 15.00,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 180.0 }
+    },
+    {
+      "category": "Apple - iPhone",
+      "diagnostic": "Boot Loop",
+      "part": {
+        "grade": "A",
+        "name": "N/A",
+        "price": 0.0,
+        "source": "",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 140.0 }
+    },
+    {
+      "category": "Apple - iPhone",
+      "diagnostic": "Battery Issue",
+      "part": {
+        "grade": "A",
+        "name": "iPhone Battery (Grade A)",
+        "price": 29.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 90.0 }
+    },
+
+
+    {
+      "deviceContains": "Samsung - Galaxy S Series - Galaxy S8",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "Galaxy S8 Screen (Grade A)",
+        "price": 89.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 150.0 }
+    },
+    {
+      "deviceContains": "Samsung - Galaxy S Series - Galaxy S10",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "Galaxy S10 Screen (Grade A)",
+        "price": 129.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 170.0 }
+    },
+    {
+      "deviceContains": "Samsung - Galaxy S Series - Galaxy S20",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "Galaxy S20 Screen (Grade A)",
+        "price": 159.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 190.0 }
+    },
+    {
+      "deviceContains": "Samsung - Galaxy S Series - Galaxy S21",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "Galaxy S21 Screen (Grade A)",
+        "price": 169.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 195.0 }
+    },
+    {
+      "deviceContains": "Samsung - Galaxy S Series - Galaxy S22",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "Galaxy S22 Screen (Grade A)",
+        "price": 189.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 210.0 }
+    },
+    {
+      "deviceContains": "Samsung - Galaxy S Series - Galaxy S23",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "Galaxy S23 Screen (Grade A)",
+        "price": 209.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 220.0 }
+    },
+    {
+      "deviceContains": "Samsung - Galaxy S Series - Galaxy S24",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "Galaxy S24 Screen (Grade A)",
+        "price": 239.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 240.0 }
+    },
+
+    {
+      "category": "Samsung - Galaxy S Series",
+      "diagnostic": "Battery Issue",
+      "part": {
+        "grade": "A",
+        "name": "Galaxy S Battery (Grade A)",
+        "price": 34.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 95.0 }
+    },
+    {
+      "category": "Samsung - Galaxy S Series",
+      "diagnostic": "Charging Port",
+      "part": {
+        "grade": "A",
+        "name": "Galaxy Charging Port Flex (Grade A)",
+        "price": 27.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 120.0 }
+    },
+    {
+      "category": "Samsung - Galaxy S Series",
+      "diagnostic": "Camera Failure",
+      "part": {
+        "grade": "A",
+        "name": "Galaxy Camera Module (Grade A)",
+        "price": 64.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 135.0 }
+    },
+    {
+      "category": "Samsung - Galaxy S Series",
+      "diagnostic": "Water Damage",
+      "part": {
+        "grade": "A",
+        "name": "Cleaning Materials (Grade A)",
+        "price": 15.00,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 190.0 }
+    },
+    {
+      "category": "Samsung - Galaxy S Series",
+      "diagnostic": "Boot Loop",
+      "part": {
+        "grade": "A",
+        "name": "N/A",
+        "price": 0.0,
+        "source": "",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 150.0 }
+    },
+
+ 
+    {
+      "deviceContains": "Google - Pixel - Pixel 6",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "Pixel 6 Screen (Grade A)",
+        "price": 129.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 170.0 }
+    },
+    {
+      "deviceContains": "Google - Pixel - Pixel 7",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "Pixel 7 Screen (Grade A)",
+        "price": 149.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 180.0 }
+    },
+    {
+      "deviceContains": "Google - Pixel - Pixel 8",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "Pixel 8 Screen (Grade A)",
+        "price": 179.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 200.0 }
+    },
+    {
+      "deviceContains": "Google - Pixel - Pixel 9",
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "Pixel 9 Screen (Grade A)",
+        "price": 199.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 215.0 }
+    },
+
+    {
+      "category": "Google - Pixel",
+      "diagnostic": "Battery Issue",
+      "part": {
+        "grade": "A",
+        "name": "Pixel Battery (Grade A)",
+        "price": 32.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 95.0 }
+    },
+    {
+      "category": "Google - Pixel",
+      "diagnostic": "Charging Port",
+      "part": {
+        "grade": "A",
+        "name": "Pixel Charging Port Flex (Grade A)",
+        "price": 26.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 120.0 }
+    },
+    {
+      "category": "Google - Pixel",
+      "diagnostic": "Camera Failure",
+      "part": {
+        "grade": "A",
+        "name": "Pixel Camera Module (Grade A)",
+        "price": 59.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 135.0 }
+    },
+    {
+      "category": "Google - Pixel",
+      "diagnostic": "Water Damage",
+      "part": {
+        "grade": "A",
+        "name": "Cleaning Materials (Grade A)",
+        "price": 15.0,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 185.0 }
+    },
+    {
+      "category": "Google - Pixel",
+      "diagnostic": "Boot Loop",
+      "part": {
+        "grade": "A",
+        "name": "N/A",
+        "price": 0.0,
+        "source": "",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 150.0 }
+    },
+
+    {
+      "category": "Windows Laptop",
+      "diagnostic": "Laptop Screen",
+      "part": {
+        "grade": "A",
+        "name": "Windows Laptop Screen (Grade A)",
+        "price": 119.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 220.0 }
+    },
+    {
+      "category": "Mac Laptop",
+      "diagnostic": "Laptop Screen",
+      "part": {
+        "grade": "A",
+        "name": "MacBook Screen Assembly (Grade A)",
+        "price": 349.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 280.0 }
+    },
+
+
+    {
+      "category": "Other Services",
+      "diagnostic": "Website Build",
+      "part": {
+        "grade": "A",
+        "name": "N/A",
+        "price": 0.0,
+        "source": "",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 900.0 }
+    },
+    {
+      "category": "Other Services",
+      "diagnostic": "Website Bug Fix",
+      "part": {
+        "grade": "A",
+        "name": "N/A",
+        "price": 0.0,
+        "source": "",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 150.0 }
+    }
+  ],
+
+  "diagnosticDefaults": [
+    {
+      "diagnostic": "Cracked Screen",
+      "part": {
+        "grade": "A",
+        "name": "Generic Screen Assembly (Grade A)",
+        "price": 99.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 140.0 }
+    },
+    {
+      "diagnostic": "Battery Issue",
+      "part": {
+        "grade": "A",
+        "name": "Generic Battery (Grade A)",
+        "price": 29.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 90.0 }
+    },
+    {
+      "diagnostic": "Water Damage",
+      "part": {
+        "grade": "A",
+        "name": "Cleaning Materials (Grade A)",
+        "price": 15.00,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 180.0 }
+    },
+    {
+      "diagnostic": "Boot Loop",
+      "part": {
+        "grade": "A",
+        "name": "N/A",
+        "price": 0.0,
+        "source": "",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 140.0 }
+    },
+    {
+      "diagnostic": "Charging Port",
+      "part": {
+        "grade": "A",
+        "name": "Generic Charging Port (Grade A)",
+        "price": 24.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 120.0 }
+    },
+    {
+      "diagnostic": "Camera Failure",
+      "part": {
+        "grade": "A",
+        "name": "Generic Camera Module (Grade A)",
+        "price": 49.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 130.0 }
+    },
+    {
+      "diagnostic": "Laptop Screen",
+      "part": {
+        "grade": "A",
+        "name": "Generic Laptop Screen (Grade A)",
+        "price": 129.99,
+        "source": "Amazon",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 220.0 }
+    },
+    {
+      "diagnostic": "Website Build",
+      "part": {
+        "grade": "A",
+        "name": "N/A",
+        "price": 0.0,
+        "source": "",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 900.0 }
+    },
+    {
+      "diagnostic": "Website Bug Fix",
+      "part": {
+        "grade": "A",
+        "name": "N/A",
+        "price": 0.0,
+        "source": "",
+        "referenceUrl": ""
+      },
+      "labor": { "price": 150.0 }
+    }
+  ]
+}

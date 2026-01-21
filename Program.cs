@@ -34,6 +34,9 @@ builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
 //  Enables [Authorize] + <AuthorizeView> in Razor Components
 builder.Services.AddAuthorizationCore();
 
+builder.Services.AddScoped<DeviceCatalogService>();
+builder.Services.AddScoped<GradeAPricingService>();
+builder.Services.AddScoped<TicketServices>();
 
 
 var app = builder.Build();

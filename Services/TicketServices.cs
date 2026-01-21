@@ -16,17 +16,18 @@ public class TicketServices
     private static int TodayCustomerIdDate()
         => int.Parse(DateTime.UtcNow.ToString("yyyyMMdd"));
 
+    private const decimal HARD_DIAGNOSTIC_FEE = 25m;
+
     /// <summary>
     /// Rule:
     /// - 1st ticket with a new email -> goes into FirstTimeCustomers only (no Customers row yet)
     /// - 2nd ticket with same email -> promote/move to Customers, remove from FirstTimeCustomers
     /// </summary>
     public async Task<int> CreateTicketAsync(
-        int createdByUserId, // NEW: logged-in user id
+        int createdByUserId,
         string customerName,
         string customerContact,
         string customerEmail,
-        string title,
         string? description)
     {
         customerEmail = customerEmail.Trim().ToLowerInvariant();
@@ -62,13 +63,11 @@ public class TicketServices
             _db.FirstTimeCustomers.Add(firstTime);
             await _db.SaveChangesAsync();
 
-            // Not promoted yet
             linkCustomerId = null;
         }
         // CASE C: email exists in FirstTimeCustomers -> 2nd ticket -> promote to Customers
         else
         {
-            // Keep latest contact info
             firstTime.Name = customerName;
             firstTime.Contact = customerContact;
             await _db.SaveChangesAsync();
@@ -90,13 +89,13 @@ public class TicketServices
             linkCustomerId = promoted.Id;
         }
 
-        // 3) Create ticket (link only if customer exists/promoted)
         var ticket = new Ticket
         {
-            CreatedByUserId = createdByUserId, // NEW: store the logged-in user id
+            CreatedByUserId = createdByUserId,
             CustomerId = linkCustomerId,
-            Title = title,
+
             Description = description,
+
             CustomerNameSnapshot = customerName,
             CustomerContactSnapshot = customerContact,
             CustomerEmailSnapshot = customerEmail
@@ -105,7 +104,6 @@ public class TicketServices
         _db.Tickets.Add(ticket);
         await _db.SaveChangesAsync();
 
-        // 4) Create repair record from description (optional)
         if (!string.IsNullOrWhiteSpace(description))
         {
             _db.Repairs.Add(new Repair
@@ -123,22 +121,20 @@ public class TicketServices
     public Task<List<Ticket>> GetTicketsAsync()
         => _db.Tickets
               .Include(t => t.Customer)
-              .OrderByDescending(t => t.CreatedAt)
+             .OrderByDescending(c => c.Id)
+
               .ToListAsync();
 
     public async Task<int> CreateTicketWithCostAsync(
-        int createdByUserId, // NEW: logged-in user id
+        int createdByUserId,
         string customerName,
         string customerContact,
         string customerEmail,
-        string title,
         string? description,
         string? deviceType,
         string? diagnostic,
         decimal partsCost,
-        decimal laborCost,
-        decimal diagnosticFee,
-        decimal totalCost)
+        decimal laborCost)
     {
         customerEmail = customerEmail.Trim().ToLowerInvariant();
 
@@ -152,17 +148,15 @@ public class TicketServices
 
         int? linkCustomerId = null;
 
-        // A) already a Customer
         if (customer != null)
         {
             linkCustomerId = customer.Id;
         }
-        // B) first time seeing this email -> create FirstTimeCustomer only
         else if (firstTime == null)
         {
             firstTime = new FirstTimeCustomer
             {
-                CustomerIdDate = int.Parse(DateTime.UtcNow.ToString("yyyyMMdd")),
+                CustomerIdDate = TodayCustomerIdDate(),
                 Name = customerName,
                 Contact = customerContact,
                 Email = customerEmail
@@ -173,7 +167,6 @@ public class TicketServices
 
             linkCustomerId = null;
         }
-        // C) email exists in FirstTimeCustomers -> 2nd ticket -> promote to Customers
         else
         {
             firstTime.Name = customerName;
@@ -197,12 +190,16 @@ public class TicketServices
             linkCustomerId = promoted.Id;
         }
 
+        // 🔒 hard rules enforced server-side
+        var diagnosticFee = HARD_DIAGNOSTIC_FEE;
+        var totalCost = partsCost + laborCost + diagnosticFee;
+
         var ticket = new Ticket
         {
-            CreatedByUserId = createdByUserId, // NEW: store the logged-in user id
+            CreatedByUserId = createdByUserId,
             CustomerId = linkCustomerId,
+            Title = $"{diagnostic ?? "Ticket"} - {deviceType ?? "Unknown Device"}",
 
-            Title = title,
             Description = description,
 
             DeviceType = deviceType,
@@ -213,7 +210,6 @@ public class TicketServices
             DiagnosticFee = diagnosticFee,
             TotalCost = totalCost,
 
-            // keep snapshots (your current flow)
             CustomerNameSnapshot = customerName,
             CustomerContactSnapshot = customerContact,
             CustomerEmailSnapshot = customerEmail
