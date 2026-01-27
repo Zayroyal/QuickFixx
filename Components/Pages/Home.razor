@@ -1,15 +1,121 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Routing
 @inject BlazorApp2.Services.AuthService Auth
 
 <PageTitle>Home</PageTitle>
 
-<h1 class="home-title">Welcome, @DisplayName</h1>
+<div class="dash">
+    <!-- Header -->
+    <div class="dash-hero">
+        <div class="dash-hero-left">
+            <div class="brand-chip">
+                <span class="brand-dot"></span>
+                <span>QuickFix</span>
+            </div>
 
-<p class="home-sub">
-    You're logged in!!!
-</p>
+            <h1 class="dash-title">Welcome back, @DisplayName</h1>
+            <p class="dash-sub">Here’s what you’re working on right now.</p>
+        </div>
+
+        <div class="dash-hero-right">
+            <NavLink class="qf-btn primary" href="/create-ticket">+ Create Ticket</NavLink>
+            <a class="qf-btn ghost" href="javascript:void(0)">Settings</a>
+        </div>
+    </div>
+
+    <!-- Switcher -->
+    <div class="dash-switch">
+    <button class="switch-btn @(ViewMode == "current" ? "active" : "")"
+            @onclick="@(() => SetMode("current"))">
+        Current Tickets
+        <span class="count">@CurrentTickets.Count</span>
+    </button>
+
+    <button class="switch-btn @(ViewMode == "old" ? "active" : "")"
+            @onclick="@(() => SetMode("old"))">
+        Old Tickets
+        <span class="count">@OldTickets.Count</span>
+    </button>
+</div>
+
+
+    <!-- Content -->
+    @if (IsLoading)
+    {
+        <div class="grid">
+            @for (int i = 0; i < 6; i++)
+            {
+                <div class="ticket-card skeleton">
+                    <div class="sk-line w60"></div>
+                    <div class="sk-line w40"></div>
+                    <div class="sk-line w80"></div>
+                    <div class="sk-line w50"></div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        var list = FilteredTickets;
+
+        if (list.Count == 0)
+        {
+            <div class="empty">
+                <div class="empty-icon">🧾</div>
+                <div class="empty-title">No tickets found</div>
+                <div class="empty-sub">
+                    Try another search, or create a new ticket.
+                </div>
+                <NavLink class="qf-btn primary" href="/create-ticket">+ Create Ticket</NavLink>
+            </div>
+        }
+        else
+        {
+            <div class="grid">
+                @foreach (var t in list)
+                {
+                    <a class="ticket-card @(t.Status == "In Progress" ? "pulse" : "")"
+                       href="@GetTicketRoute(t)">
+                        <div class="ticket-top">
+                            <div class="ticket-title">@t.Title</div>
+                            <div class="status @(t.StatusCss)">@t.Status</div>
+                        </div>
+
+                        <div class="ticket-mid">
+                            <div class="meta">
+                                <div class="meta-label">Customer</div>
+                                <div class="meta-val">@t.Customer</div>
+                            </div>
+
+                            <div class="meta">
+                                <div class="meta-label">Device</div>
+                                <div class="meta-val">@t.Device</div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-bot">
+                            <div class="meta small">
+                                <span class="meta-label">Ticket #</span>
+                                <span class="meta-val">@t.TicketNumber</span>
+                            </div>
+
+                            <div class="meta small">
+                                <span class="meta-label">Last Update</span>
+                                <span class="meta-val">@t.LastUpdate</span>
+                            </div>
+
+                            <div class="go">›</div>
+                        </div>
+
+                        <div class="card-shine"></div>
+                    </a>
+                }
+            </div>
+        }
+    }
+</div>
 
 @code {
     [CascadingParameter]
@@ -17,23 +123,96 @@
 
     private string DisplayName = "User";
 
+    private bool IsLoading = true;
+    private string ViewMode = "current"; // current | old
+    private string SearchText = "";
+
+    // Fake tickets for now (swap to DB later)
+    private List<TicketVm> CurrentTickets = new();
+    private List<TicketVm> OldTickets = new();
+
+    private List<TicketVm> FilteredTickets
+    {
+        get
+        {
+            var baseList = (ViewMode == "current") ? CurrentTickets : OldTickets;
+
+            if (string.IsNullOrWhiteSpace(SearchText))
+                return baseList;
+
+            var s = SearchText.Trim().ToLowerInvariant();
+            return baseList
+                .Where(x =>
+                    (x.Title ?? "").ToLowerInvariant().Contains(s) ||
+                    (x.Customer ?? "").ToLowerInvariant().Contains(s) ||
+                    (x.Device ?? "").ToLowerInvariant().Contains(s) ||
+                    (x.TicketNumber ?? "").ToLowerInvariant().Contains(s))
+                .ToList();
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
+        // your login/name logic
         var authState = await (AuthenticationStateTask
             ?? Task.FromResult(new AuthenticationState(new ClaimsPrincipal())));
 
         var principal = authState.User;
-
-        // We store the user Id in this claim (you already do this in SessionAuthStateProvider)
         var idText = principal.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if (!int.TryParse(idText, out var userId) || userId <= 0)
-            return;
+        if (int.TryParse(idText, out var userId) && userId > 0)
+        {
+            var dbUser = await Auth.GetByIdAsync(userId);
+            if (dbUser != null && !string.IsNullOrWhiteSpace(dbUser.Name))
+                DisplayName = dbUser.Name.Trim();
+        }
 
-        // Pull the real user row from the DB and use Name
-        var dbUser = await Auth.GetByIdAsync(userId);
+        // Fake “load” so the shimmer shows (feels alive)
+        await Task.Delay(650);
 
-        if (dbUser != null && !string.IsNullOrWhiteSpace(dbUser.Name))
-            DisplayName = dbUser.Name.Trim();
+        SeedFakeTickets();
+        IsLoading = false;
     }
+
+    private void SetMode(string mode)
+    {
+        ViewMode = mode;
+        // tiny animation trigger
+        StateHasChanged();
+    }
+
+    private void SeedFakeTickets()
+    {
+        CurrentTickets = new List<TicketVm>
+        {
+            new TicketVm("Cracked Screen - iPhone 11", "In Progress", "status-progress", "Manny Customer", "Apple iPhone 11", "QF-1042", "5 min ago"),
+            new TicketVm("Battery Replacement - iPhone 8", "In Progress", "status-progress", "Jasmine W.", "Apple iPhone 8", "QF-1039", "Today"),
+            new TicketVm("Laptop Diagnostics", "Waiting", "status-wait", "Chris T.", "MSI GE78 HX", "QF-1037", "Yesterday"),
+            new TicketVm("Data Transfer", "In Progress", "status-progress", "Alex R.", "Samsung S10+", "QF-1036", "Yesterday"),
+        };
+
+        OldTickets = new List<TicketVm>
+        {
+            new TicketVm("Screen + Frame - iPhone X", "Completed", "status-done", "Brandon K.", "Apple iPhone X", "QF-1021", "Last week"),
+            new TicketVm("Charging Port Repair", "Completed", "status-done", "Tina P.", "iPad 7th Gen", "QF-1018", "2 weeks ago"),
+            new TicketVm("Battery + Cleanup", "Completed", "status-done", "Sam M.", "Dell Laptop", "QF-1013", "Last month"),
+        };
+    }
+
+    // For now routes don’t need to exist — it can just point to a placeholder page later
+    private string GetTicketRoute(TicketVm t)
+    {
+        // later you can route to /ticket/{id}
+        return "javascript:void(0)";
+    }
+
+    private record TicketVm(
+        string Title,
+        string Status,
+        string StatusCss,
+        string Customer,
+        string Device,
+        string TicketNumber,
+        string LastUpdate
+    );
 }

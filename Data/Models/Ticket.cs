@@ -20,7 +20,7 @@ public class Ticket
     public string? CustomerContactSnapshot { get; set; }
     public string? CustomerEmailSnapshot { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public string Title { get; set; } = "";
+    
     // Ticket detail fields (Web UI)
     public string? DeviceType { get; set; }
     public string? Diagnostic { get; set; }

@@ -198,7 +198,7 @@ public class TicketServices
         {
             CreatedByUserId = createdByUserId,
             CustomerId = linkCustomerId,
-            Title = $"{diagnostic ?? "Ticket"} - {deviceType ?? "Unknown Device"}",
+            
 
             Description = description,
 
