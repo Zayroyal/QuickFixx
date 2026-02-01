@@ -20,5 +20,5 @@ public class FirstTimeCustomer
     // IMPORTANT:
     // Your SQLite table column is named "Created" and is NOT NULL,
     // so the model must match that exact name.
-    public DateTime Created { get; set; } = DateTime.UtcNow;
+    public DateTime Created{ get; set; } = DateTime.UtcNow;
 }

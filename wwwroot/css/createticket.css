@@ -1,0 +1,269 @@
+﻿/* QuickFix - Create Ticket (same feel as Home, slightly different) */
+
+.ticket-new {
+    padding: 26px 28px;
+    width: 100%;
+    max-width: none;
+    min-height: calc(100vh - 20px);
+    box-sizing: border-box;
+}
+
+/* HERO (same palette, slightly different angle + depth) */
+.ticket-new-hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    padding: 18px 20px;
+    /* slightly different gradient direction vs home */
+    background: linear-gradient(155deg, rgba(12, 35, 76, 0.94), rgba(18, 74, 148, 0.78));
+    box-shadow: 0 12px 28px rgba(0,0,0,0.20);
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+    /* subtle moving glow behind hero */
+    .ticket-new-hero::before {
+        content: "";
+        position: absolute;
+        inset: -60px;
+        background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.16), transparent 55%);
+        animation: heroFloat 8s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+@keyframes heroFloat {
+    0%,100% {
+        transform: translateY(0);
+        opacity: 0.75;
+    }
+
+    50% {
+        transform: translateY(-8px);
+        opacity: 0.95;
+    }
+}
+
+/* slow shine pass */
+.ticket-new-hero::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -70%;
+    width: 55%;
+    height: 220%;
+    transform: rotate(18deg);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    animation: heroShine 7.5s linear infinite;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+@keyframes heroShine {
+    0% {
+        left: -70%;
+    }
+
+    100% {
+        left: 140%;
+    }
+}
+
+.ticket-new-title {
+    font-size: 2rem;
+    font-weight: 900;
+    margin: 10px 0 6px 0;
+    color: rgba(255,255,255,0.96);
+    letter-spacing: .2px;
+}
+
+.ticket-new-sub {
+    margin: 0;
+    color: rgba(255,255,255,0.86);
+    line-height: 1.4;
+}
+
+.ticket-new-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    z-index: 2;
+}
+
+/* Brand chip (same as home) */
+.brand-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.18);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.92);
+    font-weight: 800;
+    z-index: 2;
+    position: relative;
+}
+
+.brand-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: #4ade80;
+    box-shadow: 0 0 0 3px rgba(74,222,128,0.18);
+}
+
+/* Buttons (same palette) */
+.qf-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 900;
+    border: 1px solid rgba(255,255,255,0.10);
+    transition: transform .12s ease, background .12s ease, border .12s ease;
+    user-select: none;
+}
+
+    .qf-btn.primary {
+        background: rgba(255,255,255,0.92);
+        color: #0b1f3a;
+        border: 1px solid rgba(255,255,255,0.20);
+    }
+
+        .qf-btn.primary:hover {
+            transform: translateY(-1px);
+            background: rgba(255,255,255,0.98);
+        }
+
+    .qf-btn.ghost {
+        background: rgba(0,0,0,0.18);
+        color: rgba(255,255,255,0.92);
+    }
+
+        .qf-btn.ghost:hover {
+            transform: translateY(-1px);
+            background: rgba(0,0,0,0.26);
+            border-color: rgba(255,255,255,0.14);
+        }
+
+/* MAIN CARD */
+.ticket-new-card {
+    margin-top: 14px;
+    width: 100%;
+    max-width: none;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.98);
+    box-shadow: 0 12px 26px rgba(0,0,0,0.10);
+    border: 1px solid rgba(0,0,0,0.06);
+    padding: 16px;
+    animation: fadeUp .18s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* subtle “alive” shine on the form card (slower than home) */
+.ticket-new-card::after {
+    content: "";
+    position: absolute;
+    top: -40%;
+    left: -70%;
+    width: 60%;
+    height: 180%;
+    transform: rotate(18deg);
+    background: linear-gradient(90deg, transparent, rgba(18,74,148,0.10), transparent);
+    animation: cardShine 9s linear infinite;
+    pointer-events: none;
+    opacity: 0.45;
+}
+
+@keyframes cardShine {
+    0% {
+        left: -70%;
+    }
+
+    100% {
+        left: 140%;
+    }
+}
+
+/* Section titles */
+.ticket-new-card h5 {
+    font-weight: 950;
+    color: #0b1f3a;
+    margin-bottom: 6px;
+}
+
+/* Inputs: keep bootstrap look, add QuickFix focus */
+.ticket-new-card .form-control,
+.ticket-new-card .form-select {
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.10);
+    padding: 10px 12px;
+    box-shadow: none;
+    transition: border-color .12s ease, box-shadow .12s ease, transform .12s ease;
+}
+
+    .ticket-new-card .form-control:focus,
+    .ticket-new-card .form-select:focus {
+        border-color: rgba(18,74,148,0.32);
+        box-shadow: 0 0 0 4px rgba(18,74,148,0.10);
+        outline: none;
+        transform: translateY(-1px);
+    }
+
+/* Make the textarea feel nicer */
+.ticket-new-card textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Validation summary: keep it clean */
+.ticket-new-card .validation-summary-errors {
+    border-radius: 12px;
+    padding: 10px 12px;
+    border: 1px solid rgba(220,38,38,0.18);
+    background: rgba(220,38,38,0.06);
+}
+
+/* The result message next to the button */
+.ticket-new-card .align-self-center {
+    font-weight: 800;
+    color: rgba(11,31,58,0.78);
+}
+
+/* Button: match QuickFix vibe while still using Bootstrap */
+.ticket-new-card .btn.btn-primary {
+    border-radius: 12px;
+    font-weight: 900;
+    padding: 10px 14px;
+    box-shadow: 0 10px 18px rgba(18,74,148,0.16);
+    transition: transform .12s ease, box-shadow .12s ease;
+}
+
+    .ticket-new-card .btn.btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 22px rgba(18,74,148,0.20);
+    }
+
+    .ticket-new-card .btn.btn-primary:disabled {
+        opacity: 0.75;
+    }

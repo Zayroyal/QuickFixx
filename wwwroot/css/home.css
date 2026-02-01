@@ -2,8 +2,12 @@
 
 .dash {
     padding: 26px 28px;
-    max-width: 1250px;
+    width: 100%;
+    max-width: none;
+    min-height: calc(100vh - 20px);
+    box-sizing: border-box;
 }
+
 
 /* HERO */
 .dash-hero {

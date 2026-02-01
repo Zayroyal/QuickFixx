@@ -8,107 +8,123 @@
 @inject DeviceCatalogService DeviceCatalog
 @inject GradeAPricingService GradeAPricing
 
-<h2>Create Ticket</h2>
+<PageTitle>Create Ticket</PageTitle>
 
-<div class="card p-3" style="max-width: 900px;">
-    <EditForm Model="_form" OnValidSubmit="HandleSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div class="row g-3">
-
-            <div class="col-12 col-md-6">
-                <h5>Customer</h5>
-
-                <label class="form-label">Name</label>
-                <input class="form-control" @bind="_form.CustomerName" @bind:event="oninput" />
-
-                <label class="form-label mt-2">Phone Number</label>
-                <input class="form-control" @bind="_form.Contact" @bind:event="oninput" />
-
-                <label class="form-label mt-2">Email</label>
-                <input class="form-control" @bind="_form.Email" @bind:event="oninput" />
+<div class="ticket-new">
+    <div class="ticket-new-hero">
+        <div>
+            <div class="brand-chip">
+                <span class="brand-dot"></span>
+                <span>QuickFix</span>
             </div>
 
-            <div class="col-12 col-md-6">
-                <h5>Ticket</h5>
-
-                <label class="form-label mt-2">Device Model</label>
-                <InputSelect class="form-select"
-                             @bind-Value="_form.DeviceType"
-                             @bind-Value:after="RecalcCostsAsync">
-                    <option value="">-- Select --</option>
-                    @foreach (var m in _deviceModels)
-                    {
-                        <option value="@m">@m</option>
-                    }
-                </InputSelect>
-
-                <label class="form-label mt-2">Diagnostic</label>
-                <InputSelect class="form-select"
-                             @bind-Value="_form.Diagnostic"
-                             @bind-Value:after="RecalcCostsAsync">
-                    <option value="">-- Select --</option>
-                    <option>Cracked Screen</option>
-                    <option>Battery Issue</option>
-                    <option>Water Damage</option>
-                    <option>Boot Loop</option>
-                    <option>Charging Port</option>
-                    <option>Camera Failure</option>
-                    <option>Laptop Screen</option>
-                    <option>Website Build</option>
-                    <option>Website Bug Fix</option>
-                </InputSelect>
-            </div>
-
-            <div class="col-12">
-                <label class="form-label">Issue / Description</label>
-                <textarea class="form-control" rows="5" @bind="_form.Description" @bind:event="oninput"></textarea>
-            </div>
-
-            <div class="col-12">
-                <h5>Costs</h5>
-            </div>
-
-            <div class="col-12 col-md-3">
-                <label class="form-label">Parts $</label>
-                <input class="form-control" value="@_form.PartsCost" readonly />
-                @if (!string.IsNullOrWhiteSpace(_partInfo))
-                {
-                    <small class="text-muted">@_partInfo</small>
-                }
-            </div>
-
-            <div class="col-12 col-md-3">
-                <label class="form-label">Labor $</label>
-                <input class="form-control" value="@_form.LaborCost" readonly />
-            </div>
-
-            <div class="col-12 col-md-3">
-                <label class="form-label">Diagnostic Fee $</label>
-                <input class="form-control" value="25" readonly />
-                <small class="text-muted">Always $25</small>
-            </div>
-
-            <div class="col-12 col-md-3">
-                <label class="form-label">Total $</label>
-                <input class="form-control" value="@TotalCost" readonly />
-                <small class="text-muted">Auto-calculated</small>
-            </div>
-
-            <div class="col-12 d-flex gap-2 mt-3">
-                <button class="btn btn-primary" type="submit" disabled="@_submitting">
-                    @(_submitting ? "Creating..." : "Create Ticket")
-                </button>
-
-                @if (!string.IsNullOrWhiteSpace(_result))
-                {
-                    <span class="align-self-center">@_result</span>
-                }
-            </div>
-
+            <h1 class="ticket-new-title">Create Ticket</h1>
+            <p class="ticket-new-sub">Fill it out, prices auto-calc, and save it.</p>
         </div>
-    </EditForm>
+
+        
+    </div>
+
+    <div class="ticket-new-card">
+        <EditForm Model="_form" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="row g-3">
+
+                <div class="col-12 col-md-6">
+                    <h5>Customer</h5>
+
+                    <label class="form-label">Name</label>
+                    <input class="form-control" @bind="_form.CustomerName" @bind:event="oninput" />
+
+                    <label class="form-label mt-2">Phone Number</label>
+                    <input class="form-control" @bind="_form.Contact" @bind:event="oninput" />
+
+                    <label class="form-label mt-2">Email</label>
+                    <input class="form-control" @bind="_form.Email" @bind:event="oninput" />
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <h5>Ticket</h5>
+
+                    <label class="form-label mt-2">Device Model</label>
+                    <InputSelect class="form-select"
+                                 @bind-Value="_form.DeviceType"
+                                 @bind-Value:after="RecalcCostsAsync">
+                        <option value="">-- Select --</option>
+                        @foreach (var m in _deviceModels)
+                        {
+                            <option value="@m">@m</option>
+                        }
+                    </InputSelect>
+
+                    <label class="form-label mt-2">Description</label>
+                    <InputSelect class="form-select"
+                                 @bind-Value="_form.Diagnostic"
+                                 @bind-Value:after="RecalcCostsAsync">
+                        <option value="">-- Select --</option>
+                        <option>Cracked Screen</option>
+                        <option>Battery Issue</option>
+                        <option>Water Damage</option>
+                        <option>Boot Loop</option>
+                        <option>Charging Port</option>
+                        <option>Camera Failure</option>
+                        <option>Laptop Screen</option>
+                        <option>Website Build</option>
+                        <option>Website Bug Fix</option>
+                    </InputSelect>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Issue / Description</label>
+                    <textarea class="form-control" rows="5" @bind="_form.Description" @bind:event="oninput"></textarea>
+                </div>
+
+                <div class="col-12">
+                    <h5>Costs</h5>
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label class="form-label">Parts $</label>
+                    <input class="form-control" value="@_form.PartsCost" readonly />
+                    @if (!string.IsNullOrWhiteSpace(_partInfo))
+                    {
+                        <small class="text-muted">@_partInfo</small>
+                    }
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label class="form-label">Labor $</label>
+                    <input class="form-control" value="@_form.LaborCost" readonly />
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label class="form-label">Service Fee $</label>
+                    <input class="form-control" value="25" readonly />
+                    <small class="text-muted">Always $25</small>
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label class="form-label">Total $</label>
+                    <input class="form-control" value="@TotalCost" readonly />
+                    <small class="text-muted">Auto-calculated</small>
+                </div>
+
+                <div class="col-12 d-flex gap-2 mt-3">
+                    <button class="btn btn-primary" type="submit" disabled="@_submitting">
+                        @(_submitting ? "Creating..." : "Create Ticket")
+                    </button>
+
+                    @if (!string.IsNullOrWhiteSpace(_result))
+                    {
+                        <span class="align-self-center">@_result</span>
+                    }
+                </div>
+
+            </div>
+        </EditForm>
+    </div>
 </div>
 
 @code {

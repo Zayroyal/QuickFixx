@@ -20,8 +20,8 @@
         </div>
 
         <div class="dash-hero-right">
-            <NavLink class="qf-btn primary" href="/create-ticket">+ Create Ticket</NavLink>
-            <a class="qf-btn ghost" href="javascript:void(0)">Settings</a>
+            <NavLink class="qf-btn primary" href="/tickets/new">+ Create Ticket</NavLink>
+            <a class="qf-btn ghost" href="/settings">Settings</a>
         </div>
     </div>
 
@@ -35,7 +35,7 @@
 
     <button class="switch-btn @(ViewMode == "old" ? "active" : "")"
             @onclick="@(() => SetMode("old"))">
-        Old Tickets
+        Previous Tickets
         <span class="count">@OldTickets.Count</span>
     </button>
 </div>
@@ -68,7 +68,7 @@
                 <div class="empty-sub">
                     Try another search, or create a new ticket.
                 </div>
-                <NavLink class="qf-btn primary" href="/create-ticket">+ Create Ticket</NavLink>
+                <NavLink class="qf-btn primary" href="/tickets/new">+ Create Ticket</NavLink>
             </div>
         }
         else
@@ -84,11 +84,7 @@
                         </div>
 
                         <div class="ticket-mid">
-                            <div class="meta">
-                                <div class="meta-label">Customer</div>
-                                <div class="meta-val">@t.Customer</div>
-                            </div>
-
+                       
                             <div class="meta">
                                 <div class="meta-label">Device</div>
                                 <div class="meta-val">@t.Device</div>
@@ -144,7 +140,6 @@
             return baseList
                 .Where(x =>
                     (x.Title ?? "").ToLowerInvariant().Contains(s) ||
-                    (x.Customer ?? "").ToLowerInvariant().Contains(s) ||
                     (x.Device ?? "").ToLowerInvariant().Contains(s) ||
                     (x.TicketNumber ?? "").ToLowerInvariant().Contains(s))
                 .ToList();
@@ -185,17 +180,17 @@
     {
         CurrentTickets = new List<TicketVm>
         {
-            new TicketVm("Cracked Screen - iPhone 11", "In Progress", "status-progress", "Manny Customer", "Apple iPhone 11", "QF-1042", "5 min ago"),
-            new TicketVm("Battery Replacement - iPhone 8", "In Progress", "status-progress", "Jasmine W.", "Apple iPhone 8", "QF-1039", "Today"),
-            new TicketVm("Laptop Diagnostics", "Waiting", "status-wait", "Chris T.", "MSI GE78 HX", "QF-1037", "Yesterday"),
-            new TicketVm("Data Transfer", "In Progress", "status-progress", "Alex R.", "Samsung S10+", "QF-1036", "Yesterday"),
+            new TicketVm("Cracked Screen - iPhone 11", "In Progress", "status-progress", "Apple iPhone 11", "QF-1042", "5 min ago"),
+            new TicketVm("Battery Replacement - iPhone 8", "In Progress", "status-progress", "Apple iPhone 8", "QF-1039", "Today"),
+            new TicketVm("Laptop Diagnostics", "Waiting", "status-wait",  "MSI GE78 HX", "QF-1037", "Yesterday"),
+            new TicketVm("Data Transfer", "In Progress", "status-progress", "Samsung S10+", "QF-1036", "Yesterday"),
         };
 
         OldTickets = new List<TicketVm>
         {
-            new TicketVm("Screen + Frame - iPhone X", "Completed", "status-done", "Brandon K.", "Apple iPhone X", "QF-1021", "Last week"),
-            new TicketVm("Charging Port Repair", "Completed", "status-done", "Tina P.", "iPad 7th Gen", "QF-1018", "2 weeks ago"),
-            new TicketVm("Battery + Cleanup", "Completed", "status-done", "Sam M.", "Dell Laptop", "QF-1013", "Last month"),
+            new TicketVm("Screen + Frame - iPhone X", "Completed", "status-done", "Apple iPhone X", "QF-1021", "Last week"),
+            new TicketVm("Charging Port Repair", "Completed", "status-done", "iPad 7th Gen", "QF-1018", "2 weeks ago"),
+            new TicketVm("Battery + Cleanup", "Completed", "status-done", "Dell Laptop", "QF-1013", "Last month"),
         };
     }
 
@@ -210,7 +205,6 @@
         string Title,
         string Status,
         string StatusCss,
-        string Customer,
         string Device,
         string TicketNumber,
         string LastUpdate

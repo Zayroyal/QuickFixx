@@ -51,7 +51,7 @@ public class GradeAPricingService
         var dv = deviceValue;
         var diag = diagnostic;
 
-        // 1) Exact device + diagnostic (if you add it later)
+        // 1) Exact device + diagnostic 
         var r1 = doc.Rules.FirstOrDefault(r =>
             !string.IsNullOrWhiteSpace(r.DeviceExact) &&
             r.DeviceExact.Equals(dv, StringComparison.OrdinalIgnoreCase) &&
@@ -67,7 +67,7 @@ public class GradeAPricingService
 
         if (r2 != null) return r2.ToResult($"deviceContains: {r2.DeviceContains}");
 
-        // 3) category + diagnostic  (THIS is what was broken in your version)
+        
         var r3 = doc.Rules.FirstOrDefault(r =>
             !string.IsNullOrWhiteSpace(r.Category) &&
             r.Category.Equals(category, StringComparison.OrdinalIgnoreCase) &&
