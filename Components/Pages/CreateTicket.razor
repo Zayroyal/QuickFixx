@@ -7,6 +7,7 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject DeviceCatalogService DeviceCatalog
 @inject GradeAPricingService GradeAPricing
+@inject NavigationManager Nav
 
 <PageTitle>Create Ticket</PageTitle>
 
@@ -191,7 +192,8 @@
                 _form.LaborCost
             );
 
-            _result = $"✅ Ticket created. ID = {ticketId}";
+            Nav.NavigateTo("/");
+            return;
         }
         catch (Exception ex)
         {

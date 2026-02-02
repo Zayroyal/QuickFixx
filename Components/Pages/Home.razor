@@ -1,8 +1,11 @@
 ﻿@page "/"
+
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Components.Routing
 @inject BlazorApp2.Services.AuthService Auth
+@inject BlazorApp2.Services.TicketServices TicketService
+@inject IJSRuntime JS
 
 <PageTitle>Home</PageTitle>
 
@@ -80,8 +83,23 @@
                        href="@GetTicketRoute(t)">
                         <div class="ticket-top">
                             <div class="ticket-title">@t.Title</div>
-                            <div class="status @(t.StatusCss)">@t.Status</div>
+
+                            <div class="ticket-actions">
+                                <div class="status @(t.StatusCss)">@t.Status</div>
+
+                                @if (ViewMode == "current" && t.Status == "Waiting")
+
+                                {
+                                    <button class="ticket-delete"
+                                            title="Delete ticket"
+                                            @onclick:stopPropagation="true"
+                                            @onclick="() => DeleteTicketAsync(t.Id)">
+                                        🗑
+                                    </button>
+                                }
+                            </div>
                         </div>
+
 
                         <div class="ticket-mid">
                        
@@ -123,7 +141,7 @@
     private string ViewMode = "current"; // current | old
     private string SearchText = "";
 
-    // Fake tickets for now (swap to DB later)
+    // Real tickets (loaded from DB)
     private List<TicketVm> CurrentTickets = new();
     private List<TicketVm> OldTickets = new();
 
@@ -145,54 +163,114 @@
                 .ToList();
         }
     }
+    private async Task DeleteTicketAsync(int ticketId)
+    {
+        var authState = await AuthenticationStateTask!;
+        var user = authState.User;
+
+        var idText = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!int.TryParse(idText, out var userId))
+            return;
+
+        if (!await JS.InvokeAsync<bool>("confirm", "Delete this ticket? This cannot be undone."))
+            return;
+
+        await TicketService.DeleteTicketAsync(ticketId, userId);
+
+        // Remove from UI immediately
+        CurrentTickets.RemoveAll(t => t.Id == ticketId);
+        OldTickets.RemoveAll(t => t.Id == ticketId);
+
+        StateHasChanged();
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        // your login/name logic
+        IsLoading = true;
+
         var authState = await (AuthenticationStateTask
             ?? Task.FromResult(new AuthenticationState(new ClaimsPrincipal())));
 
         var principal = authState.User;
         var idText = principal.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if (int.TryParse(idText, out var userId) && userId > 0)
+        // If not logged in, show empty state safely
+        if (!int.TryParse(idText, out var userId) || userId <= 0)
         {
-            var dbUser = await Auth.GetByIdAsync(userId);
-            if (dbUser != null && !string.IsNullOrWhiteSpace(dbUser.Name))
-                DisplayName = dbUser.Name.Trim();
+            CurrentTickets = new();
+            OldTickets = new();
+            IsLoading = false;
+            return;
         }
 
-        // Fake “load” so the shimmer shows (feels alive)
+        // Display name
+        var dbUser = await Auth.GetByIdAsync(userId);
+        if (dbUser != null && !string.IsNullOrWhiteSpace(dbUser.Name))
+            DisplayName = dbUser.Name.Trim();
+
+        // Keep your shimmer feel
         await Task.Delay(650);
 
-        SeedFakeTickets();
+        // Load THIS user's tickets from DB
+        var current = await TicketService.GetUserCurrentTicketsAsync(userId);
+        var old = await TicketService.GetUserOldTicketsAsync(userId);
+
+        CurrentTickets = current.Select(MapTicket).ToList();
+        OldTickets = old.Select(MapTicket).ToList();
+
         IsLoading = false;
     }
 
     private void SetMode(string mode)
     {
         ViewMode = mode;
-        // tiny animation trigger
         StateHasChanged();
     }
 
-    private void SeedFakeTickets()
+    private TicketVm MapTicket(BlazorApp2.Data.Models.Ticket t)
     {
-        CurrentTickets = new List<TicketVm>
-        {
-            new TicketVm("Cracked Screen - iPhone 11", "In Progress", "status-progress", "Apple iPhone 11", "QF-1042", "5 min ago"),
-            new TicketVm("Battery Replacement - iPhone 8", "In Progress", "status-progress", "Apple iPhone 8", "QF-1039", "Today"),
-            new TicketVm("Laptop Diagnostics", "Waiting", "status-wait",  "MSI GE78 HX", "QF-1037", "Yesterday"),
-            new TicketVm("Data Transfer", "In Progress", "status-progress", "Samsung S10+", "QF-1036", "Yesterday"),
-        };
+        var status = string.IsNullOrWhiteSpace(t.Status) ? "Waiting" : t.Status.Trim();
 
-        OldTickets = new List<TicketVm>
+        return new TicketVm(
+    t.Id,
+    BuildTitle(t),
+    status,
+    StatusCss(status),
+    t.DeviceType ?? "",
+    string.IsNullOrWhiteSpace(t.TicketNumber) ? $"#{t.Id}" : t.TicketNumber,
+    (t.UpdatedAt == default ? t.CreatedAt : t.UpdatedAt)
+        .ToLocalTime()
+        .ToString("MMM d, yyyy")
+);
+
+    }
+
+
+    private string BuildTitle(BlazorApp2.Data.Models.Ticket t)
+    {
+        var diag = t.Diagnostic?.Trim();
+        var dev = t.DeviceType?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(diag) && !string.IsNullOrWhiteSpace(dev))
+            return $"{diag} - {dev}";
+        if (!string.IsNullOrWhiteSpace(dev))
+            return dev;
+        if (!string.IsNullOrWhiteSpace(diag))
+            return diag;
+
+        return string.IsNullOrWhiteSpace(t.Description) ? "Ticket" : t.Description!;
+    }
+
+    private string StatusCss(string status)
+    {
+        return status switch
         {
-            new TicketVm("Screen + Frame - iPhone X", "Completed", "status-done", "Apple iPhone X", "QF-1021", "Last week"),
-            new TicketVm("Charging Port Repair", "Completed", "status-done", "iPad 7th Gen", "QF-1018", "2 weeks ago"),
-            new TicketVm("Battery + Cleanup", "Completed", "status-done", "Dell Laptop", "QF-1013", "Last month"),
+            "In Progress" => "status-progress",
+            "Completed" => "status-done",
+            _ => "status-wait"
         };
     }
+
 
     // For now routes don’t need to exist — it can just point to a placeholder page later
     private string GetTicketRoute(TicketVm t)
@@ -202,11 +280,13 @@
     }
 
     private record TicketVm(
-        string Title,
-        string Status,
-        string StatusCss,
-        string Device,
-        string TicketNumber,
-        string LastUpdate
-    );
+     int Id,
+     string Title,
+     string Status,
+     string StatusCss,
+     string Device,
+     string TicketNumber,
+     string LastUpdate
+ );
+
 }

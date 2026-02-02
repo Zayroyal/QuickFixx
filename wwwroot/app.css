@@ -99,3 +99,188 @@ h1:focus {
 .qf-error {
     color: #b00020;
 }
+/* DARK MODE */
+body.dark-mode {
+    background: #0b1220;
+    color: rgba(255,255,255,0.92);
+}
+
+    body.dark-mode .ticket-card,
+    body.dark-mode .empty,
+    body.dark-mode .settings-card {
+        background: rgba(17,24,39,0.98);
+        border-color: rgba(255,255,255,0.08);
+        box-shadow: 0 12px 26px rgba(0,0,0,0.45);
+    }
+
+    body.dark-mode .meta-label {
+        color: rgba(255,255,255,0.55);
+    }
+
+    body.dark-mode .meta-val,
+    body.dark-mode .ticket-title,
+    body.dark-mode .empty-title {
+        color: rgba(255,255,255,0.92);
+    }
+
+/* SETTINGS CARD */
+.settings-card {
+    margin-top: 16px;
+    border-radius: 16px;
+    padding: 18px 20px;
+    background: rgba(255,255,255,0.98);
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.10);
+}
+
+.setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.setting-title {
+    font-weight: 900;
+    color: #0b1f3a;
+}
+
+.setting-sub {
+    font-size: .9rem;
+    color: rgba(11,31,58,0.65);
+}
+
+/* TOGGLE SWITCH */
+.toggle-btn {
+    width: 54px;
+    height: 30px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(0,0,0,0.18);
+    position: relative;
+    cursor: pointer;
+    transition: background .18s ease;
+}
+
+    .toggle-btn.on {
+        background: rgba(59,130,246,0.85);
+    }
+
+.toggle-knob {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 22px;
+    height: 22px;
+    background: white;
+    border-radius: 999px;
+    transition: transform .18s ease;
+}
+
+.toggle-btn.on .toggle-knob {
+    transform: translateX(24px);
+}
+
+/* Dark mode text fix */
+body.dark-mode .setting-title,
+body.dark-mode .setting-sub {
+    color: rgba(255,255,255,0.9);
+}
+/* ------------------------------
+   DARK MODE (global)
+--------------------------------*/
+html.dark, body.dark {
+    background: #0b1220;
+    color: rgba(255,255,255,0.92);
+}
+
+    /* Cards / containers */
+    html.dark .dash,
+    html.dark .settings-card,
+    html.dark .ticket-card,
+    html.dark .empty {
+        background: transparent;
+    }
+
+    /* Hero section stays similar but darker */
+    html.dark .dash-hero {
+        background: linear-gradient(135deg, rgba(5, 15, 35, 0.95), rgba(10, 35, 75, 0.85));
+        border-color: rgba(255,255,255,0.10);
+    }
+
+    /* Normal white cards become dark */
+    html.dark .ticket-card,
+    html.dark .settings-card,
+    html.dark .empty {
+        background: rgba(255,255,255,0.06);
+        border-color: rgba(255,255,255,0.10);
+        box-shadow: 0 12px 26px rgba(0,0,0,0.40);
+    }
+
+    /* Text */
+    html.dark .dash-title,
+    html.dark .ticket-title,
+    html.dark .empty-title,
+    html.dark .settings-head,
+    html.dark .setting-title {
+        color: rgba(255,255,255,0.95);
+    }
+
+    html.dark .dash-sub,
+    html.dark .meta-label,
+    html.dark .empty-sub,
+    html.dark .setting-sub {
+        color: rgba(255,255,255,0.70);
+    }
+
+    html.dark .meta-val {
+        color: rgba(255,255,255,0.90);
+    }
+
+    /* Buttons */
+    html.dark .qf-btn.primary {
+        background: rgba(255,255,255,0.92);
+        color: #0b1f3a;
+    }
+
+    html.dark .qf-btn.ghost {
+        background: rgba(255,255,255,0.10);
+        color: rgba(255,255,255,0.92);
+        border-color: rgba(255,255,255,0.14);
+    }
+
+    /* Switch buttons */
+    html.dark .switch-btn {
+        background: rgba(255,255,255,0.08);
+        color: rgba(255,255,255,0.92);
+        border-color: rgba(255,255,255,0.12);
+    }
+
+        html.dark .switch-btn.active {
+            background: rgba(59,130,246,0.18);
+            border-color: rgba(59,130,246,0.22);
+        }
+
+        html.dark .switch-btn .count {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.12);
+        }
+
+    /* Status pills */
+    html.dark .status {
+        border-color: rgba(255,255,255,0.12);
+    }
+
+    /* Inputs (settings page) */
+    html.dark .qf-input,
+    html.dark input,
+    html.dark textarea,
+    html.dark select {
+        background: rgba(255,255,255,0.06);
+        border-color: rgba(255,255,255,0.12);
+        color: rgba(255,255,255,0.92);
+    }
+
+        html.dark .qf-input::placeholder {
+            color: rgba(255,255,255,0.50);
+        }

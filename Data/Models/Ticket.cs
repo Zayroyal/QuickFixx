@@ -20,7 +20,10 @@ public class Ticket
     public string? CustomerContactSnapshot { get; set; }
     public string? CustomerEmailSnapshot { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    
+    public string Status { get; set; } = "Waiting";   // Waiting | In Progress | Completed
+    public string TicketNumber { get; set; } = "";    // ex: QF-1042
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
     // Ticket detail fields (Web UI)
     public string? DeviceType { get; set; }
     public string? Diagnostic { get; set; }

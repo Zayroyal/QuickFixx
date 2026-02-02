@@ -77,5 +77,77 @@ namespace BlazorApp2.Services
         {
             return await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
+
+        // ----------------------------
+        // NEW: SETTINGS ACTIONS
+        // ----------------------------
+
+        public async Task ChangeEmailAsync(int userId, string newEmail)
+        {
+            newEmail = (newEmail ?? "").Trim().ToLowerInvariant();
+            if (string.IsNullOrWhiteSpace(newEmail))
+                throw new Exception("Email is required.");
+
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+                throw new Exception("User not found.");
+
+            var exists = await _db.Users.AnyAsync(u => u.Email == newEmail && u.Id != userId);
+            if (exists)
+                throw new Exception("That email is already registered.");
+
+            user.Email = newEmail;
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task ChangePasswordAsync(int userId, string newPassword)
+        {
+            newPassword = (newPassword ?? "").Trim();
+            if (string.IsNullOrWhiteSpace(newPassword) || newPassword.Length < 6)
+                throw new Exception("Password must be at least 6 characters.");
+
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+                throw new Exception("User not found.");
+
+            var (hash, salt) = PasswordHasher.Hash(newPassword);
+
+            user.PasswordHash = hash;
+            user.PasswordSalt = salt;
+
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task DeleteAccountAsync(int userId)
+        {
+            // Load user
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+                throw new Exception("User not found.");
+
+            // Delete that user's tickets + repairs to avoid FK problems
+            var tickets = await _db.Tickets
+                .Where(t => t.CreatedByUserId == userId)
+                .ToListAsync();
+
+            if (tickets.Count > 0)
+            {
+                var ticketIds = tickets.Select(t => t.Id).ToList();
+
+                var repairs = await _db.Repairs
+                    .Where(r => ticketIds.Contains(r.TicketId))
+                    .ToListAsync();
+
+                if (repairs.Count > 0)
+                    _db.Repairs.RemoveRange(repairs);
+
+                _db.Tickets.RemoveRange(tickets);
+            }
+
+            // Finally delete the user row
+            _db.Users.Remove(user);
+
+            await _db.SaveChangesAsync();
+        }
     }
 }
