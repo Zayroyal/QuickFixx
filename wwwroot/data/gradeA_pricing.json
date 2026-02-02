@@ -5,7 +5,7 @@
   "rules": [
    
     {
-      "deviceContains": "Apple - iPhone - iPhone 8",
+      "deviceContains": "Apple - iPhone - 8",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",

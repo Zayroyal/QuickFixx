@@ -1,9 +1,9 @@
 {
   "categories": [
     {
-      "name": "Apple - iPhone",
+      "name": "Apple ",
       "models": [
-        "8",
+        "iPhone 8",
         "iPhone 8 Plus",
         "iPhone X",
         "iPhone XR",
@@ -41,7 +41,7 @@
       ]
     },
     {
-      "name": "Samsung - Galaxy S Series",
+      "name": "Samsung ",
       "models": [
         "Galaxy S8",
         "Galaxy S8+",
@@ -68,15 +68,15 @@
       ]
     },
     {
-      "name": "Samsung - Galaxy A Series",
+      "name": "Samsung ",
       "models": [ "Galaxy A14", "Galaxy A15", "Galaxy A34", "Galaxy A53", "Galaxy A54" ]
     },
     {
-      "name": "Google - Pixel",
+      "name": "Google",
       "models": [ "Pixel 4", "Pixel 4a", "Pixel 5", "Pixel 5a", "Pixel 6", "Pixel 6a", "Pixel 7", "Pixel 7a", "Pixel 8", "Pixel 8 Pro", "Pixel 9", "Pixel 9 Pro" ]
     },
     {
-      "name": "Other Android",
+      "name": "Android",
       "models": [ "OnePlus 10", "OnePlus 11", "OnePlus 12", "Moto G Power", "Motorola Edge", "Xiaomi Redmi Note", "Samsung Note 10", "Samsung Note 20" ]
     },
     {
@@ -89,7 +89,7 @@
     },
     {
       "name": "Other Services",
-      "models": [ "Website Build (Request)", "Website Bug Fix (Request)" ]
+      "models": [ "Website Build", "Website Bug Fix" ]
     }
   ]
 }
