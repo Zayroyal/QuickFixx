@@ -61,21 +61,23 @@ using (var scope = app.Services.CreateScope())
 
    
 }
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<QuickFixDbContext>();
 
- using (var scope = app.Services.CreateScope())
+    var adminEmail = builder.Configuration["ADMIN_EMAIL"];
+
+    if (!string.IsNullOrWhiteSpace(adminEmail))
     {
-        var db = scope.ServiceProvider.GetRequiredService<QuickFix.Data.QuickFixDbContext>();
+        var user = db.Users.FirstOrDefault(u => u.Email == adminEmail);
 
-        db.Database.Migrate();
-
-        var admin = db.Users.FirstOrDefault(u => u.Email == "immanuellipscomb11@gmail.com");
-    Console.WriteLine($"ADMIN SEED CHECK: {admin?.Email} role = {admin?.Role}");
-    if (admin != null)
+        if (user != null && user.Role != "Admin")
         {
-            admin.Role = "Admin";
+            user.Role = "Admin";
             db.SaveChanges();
         }
     }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
