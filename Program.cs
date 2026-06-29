@@ -51,6 +51,15 @@ if (!string.IsNullOrWhiteSpace(port))
 var app = builder.Build();
 
 
+// =====================================================
+// APPLY DATABASE MIGRATIONS ON STARTUP
+// =====================================================
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<QuickFix.Data.QuickFixDbContext>();
+    db.Database.Migrate();
+}
+
 
 
 // Configure the HTTP request pipeline.
