@@ -58,9 +58,24 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<QuickFix.Data.QuickFixDbContext>();
     db.Database.Migrate();
+
+   
 }
 
+ using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<QuickFix.Data.QuickFixDbContext>();
 
+        db.Database.Migrate();
+
+        var admin = db.Users.FirstOrDefault(u => u.Email == "immanuellipscomb11@gmail.com");
+
+        if (admin != null)
+        {
+            admin.Role = "Admin";
+            db.SaveChanges();
+        }
+    }
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
