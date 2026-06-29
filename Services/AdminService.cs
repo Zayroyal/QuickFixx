@@ -21,7 +21,8 @@ namespace BlazorApp2.Services
         {
             return new DashboardStats
             {
-                ActiveTickets = await _db.Tickets.CountAsync(),
+                ActiveTickets = await _db.Tickets
+                    .CountAsync(t => t.Status != "Completed"),
 
                 WaitingTickets = await _db.Tickets
                     .CountAsync(t => t.Status == "Waiting"),
@@ -29,13 +30,18 @@ namespace BlazorApp2.Services
                 InProgressTickets = await _db.Tickets
                     .CountAsync(t => t.Status == "In Progress"),
 
-                CompletedToday = 0, // Will come from CompletedTickets table later
+                CompletedToday = await _db.Tickets
+                    .CountAsync(t =>
+                        t.Status == "Completed" &&
+                        t.UpdatedAt.Date == DateTime.UtcNow.Date),
 
                 FirstTimeCustomers = await _db.FirstTimeCustomers.CountAsync(),
 
                 ReturningCustomers = await _db.Customers.CountAsync(),
 
-                Revenue = await _db.Tickets.SumAsync(t => t.TotalCost)
+                Revenue = await _db.Tickets
+                    .Where(t => t.Status == "Completed")
+                    .SumAsync(t => t.TotalCost)
             };
         }
 
@@ -46,6 +52,7 @@ namespace BlazorApp2.Services
         public async Task<List<Ticket>> GetActiveTicketsAsync()
         {
             return await _db.Tickets
+                .Where(t => t.Status != "Completed")
                 .OrderByDescending(t => t.CreatedAt)
                 .ToListAsync();
         }
@@ -83,6 +90,18 @@ namespace BlazorApp2.Services
             _db.Tickets.Remove(ticket);
 
             await _db.SaveChangesAsync();
+        }
+
+        // =====================================================
+        // COMPLETED TICKETS
+        // =====================================================
+
+        public async Task<List<Ticket>> GetCompletedTicketsAsync()
+        {
+            return await _db.Tickets
+                .Where(t => t.Status == "Completed")
+                .OrderByDescending(t => t.UpdatedAt)
+                .ToListAsync();
         }
 
         // =====================================================

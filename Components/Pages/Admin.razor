@@ -79,6 +79,9 @@
             <button class="btn btn-secondary me-2" @onclick="() => CurrentPanel = AdminPanel.ReturningCustomers">
                 Returning Customers
             </button>
+            <button class="btn btn-secondary me-2" @onclick="() => CurrentPanel = AdminPanel.CompletedTickets">
+                Completed Tickets
+            </button>
 
             <button class="btn btn-secondary" @onclick="() => CurrentPanel = AdminPanel.Analytics">
                 Analytics
@@ -305,6 +308,61 @@
                 </div>
             </div>
         }
+        @if (CurrentPanel == AdminPanel.CompletedTickets)
+        {
+            <div class="card shadow-sm mb-5">
+                <div class="card-header">
+                    <h4>Completed Tickets</h4>
+                </div>
+
+                <div class="card-body table-responsive admin-table">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Ticket #</th>
+                                <th>Customer</th>
+                                <th>Email</th>
+                                <th>Device</th>
+                                <th>Total</th>
+                                <th>Completed</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (CompletedTickets.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center">
+                                        No completed tickets found.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var ticket in CompletedTickets)
+                                {
+                                    <tr>
+                                        <td>@ticket.TicketNumber</td>
+                                        <td>@ticket.CustomerNameSnapshot</td>
+                                        <td>@ticket.CustomerEmailSnapshot</td>
+                                        <td>@ticket.DeviceType</td>
+                                        <td>@ticket.TotalCost.ToString("C")</td>
+                                        <td>@ticket.UpdatedAt.ToLocalTime().ToShortDateString()</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary"
+                                                    @onclick="() => SelectTicket(ticket.Id)">
+                                                View
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
 
         @if (CurrentPanel == AdminPanel.Analytics)
         {
@@ -331,6 +389,7 @@
     private List<Ticket> Tickets = new();
     private List<Customer> Customers = new();
     private List<FirstTimeCustomer> FirstTimeCustomers = new();
+    private List<Ticket> CompletedTickets = new();
 
     private Ticket? SelectedTicket;
     private string SearchText = "";
@@ -364,6 +423,7 @@
     private async Task LoadDashboardAsync()
     {
         Stats = await AdminService.GetDashboardStatsAsync();
+        CompletedTickets = await AdminService.GetCompletedTicketsAsync();
         Tickets = await AdminService.GetActiveTicketsAsync();
         Customers = await AdminService.GetCustomersAsync();
         FirstTimeCustomers = await AdminService.GetFirstTimeCustomersAsync();
@@ -399,14 +459,29 @@
         SelectedTicket.Status = "In Progress";
         await SaveTicket();
     }
-
     private async Task MarkCompleted()
     {
         if (SelectedTicket == null)
             return;
 
         SelectedTicket.Status = "Completed";
-        await SaveTicket();
+
+        SelectedTicket.TotalCost =
+            SelectedTicket.PartsCost +
+            SelectedTicket.LaborCost +
+            SelectedTicket.DiagnosticFee;
+
+        await AdminService.UpdateTicketAsync(SelectedTicket);
+
+        Message = "Ticket marked as completed.";
+
+        SelectedTicket = null;
+
+        await LoadDashboardAsync();
+
+        CurrentPanel = AdminPanel.CompletedTickets;
+
+        StateHasChanged();
     }
 
     private async Task DeleteTicket(int id)
@@ -426,6 +501,7 @@
         ActiveTickets,
         FirstTimeCustomers,
         ReturningCustomers,
+        CompletedTickets,
         Analytics
     }
 }
