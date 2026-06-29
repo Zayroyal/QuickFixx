@@ -1,7 +1,7 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 
-namespace BlazorApp2.Data.Models;
+namespace QuickFix.Data.Models;
 
 public class Customer
 {

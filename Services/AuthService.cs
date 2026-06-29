@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using BlazorApp2.Data;
-using BlazorApp2.Data.Models;
+﻿
+using QuickFix.Services;
+using Microsoft.EntityFrameworkCore;
+using QuickFix.Data;
+using QuickFix.Data.Models;
 
-namespace BlazorApp2.Services
+namespace QuickFix.Services
 {
     public class AuthService
     {

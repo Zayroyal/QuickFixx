@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BlazorApp2.Models;
+namespace QuickFix.Models;
 
 public class CreateTicketFormModel
 {

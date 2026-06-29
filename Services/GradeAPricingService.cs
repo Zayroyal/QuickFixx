@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace BlazorApp2.Services;
+namespace QuickFix.Services;
 
 public class GradeAPricingService
 {
@@ -24,6 +24,7 @@ public class GradeAPricingService
             return PricingResult.Empty($"Missing pricing file: {path}");
 
         PricingDoc? doc;
+
         try
         {
             var json = await File.ReadAllTextAsync(path);
@@ -41,67 +42,133 @@ public class GradeAPricingService
         if (doc == null)
             return PricingResult.Empty("Pricing JSON returned null");
 
-        // Safety: never null
         doc.Rules ??= new();
         doc.DiagnosticDefaults ??= new();
 
         var category = ExtractCategory(deviceValue);
 
-        // Normalize for matching
-        var dv = deviceValue;
-        var diag = diagnostic;
+        var normalizedDevice = Normalize(deviceValue);
+        var normalizedDiagnostic = Normalize(diagnostic);
+        var normalizedCategory = Normalize(category);
 
-        // 1) Exact device + diagnostic 
+        // =====================================================
+        // 1. EXACT DEVICE + DIAGNOSTIC
+        // =====================================================
         var r1 = doc.Rules.FirstOrDefault(r =>
             !string.IsNullOrWhiteSpace(r.DeviceExact) &&
-            r.DeviceExact.Equals(dv, StringComparison.OrdinalIgnoreCase) &&
-            r.Diagnostic.Equals(diag, StringComparison.OrdinalIgnoreCase));
+            Normalize(r.DeviceExact) == normalizedDevice &&
+            Normalize(r.Diagnostic) == normalizedDiagnostic);
 
-        if (r1 != null) return r1.ToResult($"deviceExact: {r1.DeviceExact}");
+        if (r1 != null)
+            return r1.ToResult($"deviceExact: {r1.DeviceExact}");
 
-        // 2) deviceContains + diagnostic
+        // =====================================================
+        // 2. DEVICE CONTAINS + DIAGNOSTIC
+        // Checks both directions to handle slightly different dropdown text.
+        // =====================================================
         var r2 = doc.Rules.FirstOrDefault(r =>
             !string.IsNullOrWhiteSpace(r.DeviceContains) &&
-            dv.Contains(r.DeviceContains, StringComparison.OrdinalIgnoreCase) &&
-            r.Diagnostic.Equals(diag, StringComparison.OrdinalIgnoreCase));
+            Normalize(r.Diagnostic) == normalizedDiagnostic &&
+            (
+                normalizedDevice.Contains(Normalize(r.DeviceContains)) ||
+                Normalize(r.DeviceContains).Contains(normalizedDevice)
+            ));
 
-        if (r2 != null) return r2.ToResult($"deviceContains: {r2.DeviceContains}");
+        if (r2 != null)
+            return r2.ToResult($"deviceContains: {r2.DeviceContains}");
 
-        
+        // =====================================================
+        // 3. MODEL NAME + DIAGNOSTIC
+        // Example:
+        // deviceValue: Apple - iPhone - iPhone 15
+        // modelName: iPhone 15
+        // =====================================================
+        var modelName = ExtractModelName(deviceValue);
+        var normalizedModelName = Normalize(modelName);
+
+        var rModel = doc.Rules.FirstOrDefault(r =>
+            !string.IsNullOrWhiteSpace(r.DeviceContains) &&
+            Normalize(r.Diagnostic) == normalizedDiagnostic &&
+            Normalize(r.DeviceContains).Contains(normalizedModelName));
+
+        if (rModel != null)
+            return rModel.ToResult($"modelName: {modelName}");
+
+        // =====================================================
+        // 4. CATEGORY + DIAGNOSTIC
+        // =====================================================
         var r3 = doc.Rules.FirstOrDefault(r =>
             !string.IsNullOrWhiteSpace(r.Category) &&
-            r.Category.Equals(category, StringComparison.OrdinalIgnoreCase) &&
-            r.Diagnostic.Equals(diag, StringComparison.OrdinalIgnoreCase));
+            Normalize(r.Category) == normalizedCategory &&
+            Normalize(r.Diagnostic) == normalizedDiagnostic);
 
-        if (r3 != null) return r3.ToResult($"category: {r3.Category}");
+        if (r3 != null)
+            return r3.ToResult($"category: {r3.Category}");
 
-        // 4) fallback: diagnostic defaults
+        // =====================================================
+        // 5. DIAGNOSTIC DEFAULT LAST
+        // =====================================================
         var d1 = doc.DiagnosticDefaults.FirstOrDefault(d =>
-            d.Diagnostic.Equals(diag, StringComparison.OrdinalIgnoreCase));
+            Normalize(d.Diagnostic) == normalizedDiagnostic);
 
         return d1?.ToResult("diagnosticDefaults") ?? PricingResult.Empty("No pricing match found");
     }
 
-    // IMPORTANT:
-    // Your JSON categories look like "Apple - iPhone" or "Samsung - Galaxy S Series"
-    // Your device dropdown values look like "Apple - iPhone - iPhone 8 Plus"
-    // So category should be FIRST TWO segments, not just first segment.
+    // =====================================================
+    // CATEGORY EXTRACTION
+    // =====================================================
     private static string ExtractCategory(string deviceValue)
     {
-        // Device strings look like: "Apple - iPhone - iPhone 8 Plus"
-        // We want the category to be: "Apple - iPhone"
-        if (string.IsNullOrWhiteSpace(deviceValue)) return "";
+        if (string.IsNullOrWhiteSpace(deviceValue))
+            return "";
 
-        var parts = deviceValue.Split(" - ", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (deviceValue.StartsWith("Apple - iPhone", StringComparison.OrdinalIgnoreCase))
+            return "Apple - iPhone";
 
-        if (parts.Length >= 2)
-            return $"{parts[0]} - {parts[1]}";
+        if (deviceValue.StartsWith("Samsung - Galaxy", StringComparison.OrdinalIgnoreCase))
+            return "Samsung - Galaxy S Series";
+
+        if (deviceValue.StartsWith("Google - Pixel", StringComparison.OrdinalIgnoreCase))
+            return "Google - Pixel";
+
+        if (deviceValue.StartsWith("Windows", StringComparison.OrdinalIgnoreCase))
+            return "Windows Laptop";
+
+        if (deviceValue.StartsWith("Mac", StringComparison.OrdinalIgnoreCase))
+            return "Mac Laptop";
 
         return "";
     }
 
+    // =====================================================
+    // MODEL EXTRACTION
+    // =====================================================
+    private static string ExtractModelName(string deviceValue)
+    {
+        if (string.IsNullOrWhiteSpace(deviceValue))
+            return "";
 
+        var parts = deviceValue.Split(" - ", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
+        if (parts.Length >= 3)
+            return parts[2];
+
+        return deviceValue;
+    }
+
+    // =====================================================
+    // NORMALIZE TEXT FOR MATCHING
+    // =====================================================
+    private static string Normalize(string? value)
+    {
+        return (value ?? "")
+            .Trim()
+            .Replace("–", "-")
+            .Replace("—", "-")
+            .Replace("_", " ")
+            .Replace("  ", " ")
+            .ToLowerInvariant();
+    }
 
     private class PricingDoc
     {
@@ -153,8 +220,6 @@ public class PricingResult
     public decimal LaborCost { get; set; }
     public string PartName { get; set; } = "";
     public string PartGrade { get; set; } = "A";
-
-    // Debug text so you can SEE what matched
     public string MatchedBy { get; set; } = "";
 
     public static PricingResult Empty(string matchedBy = "")

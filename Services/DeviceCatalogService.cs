@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace BlazorApp2.Services;
+namespace QuickFix.Services;
 
 public class DeviceCatalogService
 {

@@ -1,13 +1,13 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using BlazorApp2.Services;
+using QuickFix.Services;
 
-namespace BlazorApp2.Auth
+namespace QuickFix.Auth
 {
     public class SessionAuthStateProvider : AuthenticationStateProvider
     {
-        private const string Key = "blazorapp2_user_id";
+        private const string Key = "QuickFix_user_id";
 
         private readonly ProtectedSessionStorage _session;
         private readonly AuthService _auth;
@@ -35,7 +35,7 @@ namespace BlazorApp2.Auth
                         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                         new Claim(ClaimTypes.Name, user.Email),
                         new Claim(ClaimTypes.Role, user.Role)
-                    }, authenticationType: "BlazorApp2Session");
+                    }, authenticationType: "QuickFixSession");
 
                     principal = new ClaimsPrincipal(identity);
                 }

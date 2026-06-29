@@ -1,17 +1,17 @@
 ﻿@page "/admin"
 @attribute [Authorize(Roles = "Admin")]
 
-@using BlazorApp2.Data.Models
-@using BlazorApp2.Services
+@using QuickFix.Data.Models
+@using QuickFix.Services
 @using Microsoft.AspNetCore.Authorization
 
 @inject AdminService AdminService
 
-<PageTitle>QuickFix Admin</PageTitle>
+<PageTitle> Admin</PageTitle>
 
 <div class="container-fluid admin-page">
 
-    <h1 class="mb-4">QuickFix Admin Dashboard</h1>
+    <h1 class="mb-4"> Admin Dashboard</h1>
 
     @if (!string.IsNullOrWhiteSpace(Message))
     {

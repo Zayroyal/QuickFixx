@@ -3,8 +3,8 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Components.Routing
-@inject BlazorApp2.Services.AuthService Auth
-@inject BlazorApp2.Services.TicketServices TicketService
+@inject QuickFix.Services.AuthService Auth
+@inject QuickFix.Services.TicketServices TicketService
 @inject IJSRuntime JS
 
 <PageTitle>Home</PageTitle>
@@ -227,7 +227,7 @@
         StateHasChanged();
     }
 
-    private TicketVm MapTicket(BlazorApp2.Data.Models.Ticket t)
+    private TicketVm MapTicket(QuickFix.Data.Models.Ticket t)
     {
         var status = string.IsNullOrWhiteSpace(t.Status) ? "Waiting" : t.Status.Trim();
 
@@ -246,7 +246,7 @@
     }
 
 
-    private string BuildTitle(BlazorApp2.Data.Models.Ticket t)
+    private string BuildTitle(QuickFix.Data.Models.Ticket t)
     {
         var diag = t.Diagnostic?.Trim();
         var dev = t.DeviceType?.Trim();

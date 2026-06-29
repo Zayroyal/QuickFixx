@@ -1,4 +1,4 @@
-﻿namespace BlazorApp2.Data.Models
+﻿namespace QuickFix.Data.Models
 {
     public class AppUser
     {

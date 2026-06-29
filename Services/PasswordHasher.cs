@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
-namespace BlazorApp2.Services
+namespace QuickFix.Services
 {
     public static class PasswordHasher
     {
