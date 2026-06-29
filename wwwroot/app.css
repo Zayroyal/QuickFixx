@@ -284,3 +284,199 @@ html.dark, body.dark {
         html.dark .qf-input::placeholder {
             color: rgba(255,255,255,0.50);
         }
+    /* =====================================================
+   QUICKFIX DARK MODE OVERRIDES
+   ===================================================== */
+
+    html.dark,
+    html.dark body {
+        background-color: #0b1220 !important;
+        color: #f8fafc !important;
+    }
+
+        /* =====================================================
+   GLOBAL PAGE BACKGROUNDS
+   ===================================================== */
+
+        html.dark .page,
+        html.dark main,
+        html.dark article,
+        html.dark .content,
+        html.dark .container,
+        html.dark .container-fluid,
+        html.dark .admin-page {
+            background-color: #0b1220 !important;
+            color: #f8fafc !important;
+        }
+
+        /* =====================================================
+   BOOTSTRAP CARDS / PANELS
+   ===================================================== */
+
+        html.dark .card,
+        html.dark .card-body,
+        html.dark .card-header,
+        html.dark .qf-card,
+        html.dark .settings-card,
+        html.dark .ticket-card,
+        html.dark .empty {
+            background-color: #111827 !important;
+            color: #f8fafc !important;
+            border-color: #374151 !important;
+        }
+
+        /* =====================================================
+   BOOTSTRAP TABLES
+   ===================================================== */
+
+        html.dark .table,
+        html.dark .table thead,
+        html.dark .table tbody,
+        html.dark .table tr,
+        html.dark .table th,
+        html.dark .table td {
+            background-color: #111827 !important;
+            color: #f8fafc !important;
+            border-color: #374151 !important;
+        }
+
+        html.dark .table-hover tbody tr:hover,
+        html.dark .table-hover tbody tr:hover th,
+        html.dark .table-hover tbody tr:hover td {
+            background-color: #1f2937 !important;
+            color: #f8fafc !important;
+        }
+
+        /* =====================================================
+   FORMS / TEXTBOXES / SELECTS
+   ===================================================== */
+
+        html.dark input,
+        html.dark textarea,
+        html.dark select,
+        html.dark .form-control,
+        html.dark .form-select,
+        html.dark .qf-input {
+            background-color: #1f2937 !important;
+            color: #f8fafc !important;
+            border-color: #4b5563 !important;
+        }
+
+            html.dark input::placeholder,
+            html.dark textarea::placeholder,
+            html.dark .form-control::placeholder,
+            html.dark .qf-input::placeholder {
+                color: #cbd5e1 !important;
+            }
+
+            html.dark input:focus,
+            html.dark textarea:focus,
+            html.dark select:focus,
+            html.dark .form-control:focus,
+            html.dark .form-select:focus,
+            html.dark .qf-input:focus {
+                background-color: #111827 !important;
+                color: #f8fafc !important;
+                border-color: #60a5fa !important;
+            }
+
+        html.dark option {
+            background-color: #1f2937 !important;
+            color: #f8fafc !important;
+        }
+
+        /* =====================================================
+   TEXT / LABELS
+   ===================================================== */
+
+        html.dark label,
+        html.dark .form-label,
+        html.dark p,
+        html.dark span,
+        html.dark h1,
+        html.dark h2,
+        html.dark h3,
+        html.dark h4,
+        html.dark h5,
+        html.dark h6,
+        html.dark .setting-title,
+        html.dark .setting-sub,
+        html.dark .meta-label,
+        html.dark .meta-val,
+        html.dark .ticket-title,
+        html.dark .empty-title {
+            color: #f8fafc !important;
+        }
+
+        /* =====================================================
+   NAVIGATION / SIDEBAR
+   ===================================================== */
+
+        html.dark .sidebar,
+        html.dark .top-row,
+        html.dark .navbar,
+        html.dark .nav-scrollable {
+            background-color: #020617 !important;
+            color: #f8fafc !important;
+        }
+
+        html.dark .nav-link {
+            color: #e5e7eb !important;
+        }
+
+            html.dark .nav-link.active {
+                background-color: #1d4ed8 !important;
+                color: #ffffff !important;
+            }
+
+        /* =====================================================
+   BUTTONS
+   ===================================================== */
+
+        html.dark .btn-secondary {
+            background-color: #374151 !important;
+            border-color: #4b5563 !important;
+            color: #f8fafc !important;
+        }
+
+        html.dark .btn-outline-primary {
+            color: #93c5fd !important;
+            border-color: #60a5fa !important;
+        }
+
+        html.dark .btn-outline-danger {
+            color: #fca5a5 !important;
+            border-color: #f87171 !important;
+        }
+
+        /* =====================================================
+   ALERTS / VALIDATION
+   ===================================================== */
+
+        html.dark .alert {
+            background-color: #1f2937 !important;
+            color: #f8fafc !important;
+            border-color: #374151 !important;
+        }
+
+        html.dark .validation-message,
+        html.dark .qf-error {
+            color: #fca5a5 !important;
+        }
+/* =====================================================
+   NAV MENU ICON ALIGNMENT
+   ===================================================== */
+
+.nav-link {
+    display: flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+}
+
+    .nav-link .bi {
+        width: 22px !important;
+        min-width: 22px !important;
+        text-align: center !important;
+        font-size: 1rem !important;
+        line-height: 1 !important;
+    }

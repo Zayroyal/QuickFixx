@@ -2,6 +2,7 @@
 
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+
 @inject IJSRuntime JS
 @inject NavigationManager Nav
 @inject AuthenticationStateProvider AuthStateProvider
@@ -11,7 +12,9 @@
 <PageTitle>Settings</PageTitle>
 
 <div class="dash">
+
     <!-- Header -->
+
     <div class="dash-hero">
         <div class="dash-hero-left">
             <div class="brand-chip">
@@ -24,98 +27,163 @@
         </div>
 
         <div class="dash-hero-right">
-            <button class="qf-btn ghost" @onclick="LogoutAsync">Logout</button>
+            <button class="qf-btn ghost"
+                    @onclick="LogoutAsync">
+                Logout
+            </button>
         </div>
     </div>
 
     <!-- Appearance -->
+
     <div class="settings-card">
-        <div class="settings-head">Appearance</div>
+
+        <div class="settings-head">
+            Appearance
+        </div>
 
         <div class="setting-row">
+
             <div class="setting-text">
-                <div class="setting-title">Dark Mode</div>
-                <div class="setting-sub">Toggles the whole app theme.</div>
+                <div class="setting-title">
+                    Dark Mode
+                </div>
+
+                <div class="setting-sub">
+                    Toggles the whole app theme.
+                </div>
             </div>
 
             <button class="toggle-btn @(IsDarkMode ? "on" : "")"
                     @onclick="ToggleDarkMode">
                 <span class="toggle-knob"></span>
             </button>
+
         </div>
+
     </div>
 
     <!-- Account -->
+
     <div class="settings-card">
-        <div class="settings-head">Account</div>
+
+        <div class="settings-head">
+            Account
+        </div>
+
+        <!-- Change Email -->
 
         <div class="setting-block">
-            <div class="setting-title">Change Email</div>
-            <div class="setting-sub">Enter a new email and save.</div>
+
+            <div class="setting-title">
+                Change Email
+            </div>
+
+            <div class="setting-sub">
+                Enter a new email and save.
+            </div>
 
             <div class="setting-form">
+
                 <input class="qf-input"
                        placeholder="New email"
                        @bind="NewEmail"
                        @bind:event="oninput" />
+
                 <button class="qf-btn primary"
                         disabled="@Busy"
                         @onclick="ChangeEmailAsync">
+
                     @(Busy ? "Saving..." : "Change Email")
+
                 </button>
+
             </div>
+
         </div>
 
         <div class="setting-divider"></div>
 
+        <!-- Change Password -->
+
         <div class="setting-block">
-            <div class="setting-title">Change Password</div>
-            <div class="setting-sub">Enter a new password and save.</div>
+
+            <div class="setting-title">
+                Change Password
+            </div>
+
+            <div class="setting-sub">
+                Enter a new password and save.
+            </div>
 
             <div class="setting-form">
+
                 <input class="qf-input"
                        type="password"
                        placeholder="New password"
                        @bind="NewPassword"
                        @bind:event="oninput" />
+
                 <button class="qf-btn primary"
                         disabled="@Busy"
                         @onclick="ChangePasswordAsync">
+
                     @(Busy ? "Saving..." : "Change Password")
+
                 </button>
+
             </div>
+
         </div>
 
         @if (!string.IsNullOrWhiteSpace(Message))
         {
-            <div class="setting-message">@Message</div>
+            <div class="setting-message">
+                @Message
+            </div>
         }
+
     </div>
 
     <!-- Danger Zone -->
+
     <div class="settings-card danger">
-        <div class="settings-head">Danger Zone</div>
+
+        <div class="settings-head">
+            Danger Zone
+        </div>
 
         <div class="setting-block">
-            <div class="setting-title">Delete Account</div>
+
+            <div class="setting-title">
+                Delete Account
+            </div>
+
             <div class="setting-sub">
                 This will permanently delete your user account.
             </div>
 
             <div class="danger-confirm">
+
                 <input class="qf-input"
-                       placeholder='Type DELETE to confirm'
+                       placeholder="Type DELETE to confirm"
                        @bind="DeleteConfirmText"
                        @bind:event="oninput" />
+
                 <button class="qf-btn danger-btn"
                         @attributes="GetDeleteDisabledAttrs()"
                         @onclick="DeleteAccountAsync">
+
                     @(Busy ? "Deleting..." : "Delete Account")
+
                 </button>
 
             </div>
+
         </div>
+
     </div>
+
 </div>
 
 @code {
@@ -128,18 +196,39 @@
     private string DeleteConfirmText = "";
     private string? Message;
 
-    protected override async Task OnInitializedAsync()
+    // =====================================================
+    // LOAD SETTINGS
+    // =====================================================
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (!firstRender)
+            return;
+
         IsDarkMode = await JS.InvokeAsync<bool>("qfTheme.get");
+
         await JS.InvokeVoidAsync("qfTheme.apply", IsDarkMode);
+
+        StateHasChanged();
     }
+
+    // =====================================================
+    // TOGGLE DARK MODE
+    // =====================================================
 
     private async Task ToggleDarkMode()
     {
         IsDarkMode = !IsDarkMode;
+
         await JS.InvokeVoidAsync("qfTheme.set", IsDarkMode);
-        await JS.InvokeVoidAsync("qfTheme.apply", IsDarkMode);
+
+        StateHasChanged();
     }
+
+    // =====================================================
+    // DELETE BUTTON STATE
+    // =====================================================
+
     private Dictionary<string, object> GetDeleteDisabledAttrs()
     {
         if (Busy || DeleteConfirmText != "DELETE")
@@ -148,17 +237,27 @@
         return new();
     }
 
+    // =====================================================
+    // GET CURRENT USER ID
+    // =====================================================
+
     private async Task<int> GetUserIdAsync()
     {
         var state = await AuthStateProvider.GetAuthenticationStateAsync();
+
         var user = state.User;
 
         var idStr = user.FindFirstValue(ClaimTypes.NameIdentifier);
+
         if (int.TryParse(idStr, out var id) && id > 0)
             return id;
 
         throw new InvalidOperationException("Not logged in.");
     }
+
+    // =====================================================
+    // LOGOUT
+    // =====================================================
 
     private async Task LogoutAsync()
     {
@@ -168,9 +267,11 @@
             return;
 
         Busy = true;
+
         try
         {
             await SessionAuth.SignOutAsync();
+
             Nav.NavigateTo("/login", true);
         }
         catch (Exception ex)
@@ -183,11 +284,18 @@
         }
     }
 
+    // =====================================================
+    // CHANGE EMAIL
+    // =====================================================
+
     private async Task ChangeEmailAsync()
     {
         Message = null;
 
-        var email = (NewEmail ?? "").Trim().ToLowerInvariant();
+        var email = (NewEmail ?? "")
+            .Trim()
+            .ToLowerInvariant();
+
         if (string.IsNullOrWhiteSpace(email))
         {
             Message = "❌ Enter a new email first.";
@@ -198,15 +306,17 @@
             return;
 
         Busy = true;
+
         try
         {
             var userId = await GetUserIdAsync();
+
             await Auth.ChangeEmailAsync(userId, email);
 
-            // refresh claims (email is stored in ClaimTypes.Name)
             await SessionAuth.SignInAsync(userId);
 
             Message = "✅ Email updated.";
+
             NewEmail = "";
         }
         catch (Exception ex)
@@ -219,11 +329,16 @@
         }
     }
 
+    // =====================================================
+    // CHANGE PASSWORD
+    // =====================================================
+
     private async Task ChangePasswordAsync()
     {
         Message = null;
 
         var pw = (NewPassword ?? "").Trim();
+
         if (string.IsNullOrWhiteSpace(pw) || pw.Length < 6)
         {
             Message = "❌ Password must be at least 6 characters.";
@@ -234,12 +349,15 @@
             return;
 
         Busy = true;
+
         try
         {
             var userId = await GetUserIdAsync();
+
             await Auth.ChangePasswordAsync(userId, pw);
 
             Message = "✅ Password updated.";
+
             NewPassword = "";
         }
         catch (Exception ex)
@@ -252,6 +370,10 @@
         }
     }
 
+    // =====================================================
+    // DELETE ACCOUNT
+    // =====================================================
+
     private async Task DeleteAccountAsync()
     {
         Message = null;
@@ -262,19 +384,24 @@
             return;
         }
 
-        if (!await JS.InvokeAsync<bool>("confirm", "This will permanently delete your account. Continue?"))
+        if (!await JS.InvokeAsync<bool>("confirm",
+            "This will permanently delete your account. Continue?"))
             return;
 
-        if (!await JS.InvokeAsync<bool>("confirm", "Last warning. Are you 100% sure?"))
+        if (!await JS.InvokeAsync<bool>("confirm",
+            "Last warning. Are you 100% sure?"))
             return;
 
         Busy = true;
+
         try
         {
             var userId = await GetUserIdAsync();
+
             await Auth.DeleteAccountAsync(userId);
 
             await SessionAuth.SignOutAsync();
+
             Nav.NavigateTo("/login", true);
         }
         catch (Exception ex)

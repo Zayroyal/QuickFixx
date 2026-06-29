@@ -30,10 +30,16 @@ namespace BlazorApp2.Services
                 InProgressTickets = await _db.Tickets
                     .CountAsync(t => t.Status == "In Progress"),
 
+                
                 CompletedToday = await _db.Tickets
                     .CountAsync(t =>
                         t.Status == "Completed" &&
                         t.UpdatedAt.Date == DateTime.UtcNow.Date),
+                
+                
+                CompletedTickets = await _db.Tickets
+                    .CountAsync(t => t.Status == "Completed"),
+
 
                 FirstTimeCustomers = await _db.FirstTimeCustomers.CountAsync(),
 
@@ -142,5 +148,7 @@ namespace BlazorApp2.Services
         public int ReturningCustomers { get; set; }
 
         public decimal Revenue { get; set; }
+
+        public int CompletedTickets { get; set; } = 0;
     }
 }

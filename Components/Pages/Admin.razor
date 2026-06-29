@@ -1,7 +1,4 @@
-﻿
-
-
-@page "/admin"
+﻿@page "/admin"
 @attribute [Authorize(Roles = "Admin")]
 
 @using BlazorApp2.Data.Models
@@ -27,6 +24,10 @@
     }
     else
     {
+        @* =====================================================
+           DASHBOARD STAT CARDS
+           ===================================================== *@
+
         <div class="row g-3 mb-4">
 
             <div class="col-md-3">
@@ -59,6 +60,42 @@
             <div class="col-md-3">
                 <div class="card shadow-sm">
                     <div class="card-body">
+                        <h6>Completed Tickets</h6>
+                        <h2>@Stats.CompletedTickets</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6>Completed Today</h6>
+                        <h2>@Stats.CompletedToday</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6>First-Time Customers</h6>
+                        <h2>@Stats.FirstTimeCustomers</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6>Returning Customers</h6>
+                        <h2>@Stats.ReturningCustomers</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
                         <h6>Total Revenue</h6>
                         <h2>@Stats.Revenue.ToString("C")</h2>
                     </div>
@@ -66,6 +103,10 @@
             </div>
 
         </div>
+
+        @* =====================================================
+           ADMIN PANEL BUTTONS
+           ===================================================== *@
 
         <div class="mb-4">
             <button class="btn btn-primary me-2" @onclick="() => CurrentPanel = AdminPanel.ActiveTickets">
@@ -79,6 +120,7 @@
             <button class="btn btn-secondary me-2" @onclick="() => CurrentPanel = AdminPanel.ReturningCustomers">
                 Returning Customers
             </button>
+
             <button class="btn btn-secondary me-2" @onclick="() => CurrentPanel = AdminPanel.CompletedTickets">
                 Completed Tickets
             </button>
@@ -88,6 +130,10 @@
             </button>
         </div>
 
+        @* =====================================================
+           SEARCH BAR
+           ===================================================== *@
+
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <input class="form-control"
@@ -96,6 +142,10 @@
                        @bind:event="oninput" />
             </div>
         </div>
+
+        @* =====================================================
+           ACTIVE TICKETS PANEL
+           ===================================================== *@
 
         @if (CurrentPanel == AdminPanel.ActiveTickets)
         {
@@ -119,27 +169,38 @@
                         </thead>
 
                         <tbody>
-                            @foreach (var ticket in FilteredTickets)
+                            @if (!FilteredTickets.Any())
                             {
                                 <tr>
-                                    <td>@ticket.TicketNumber</td>
-                                    <td>@ticket.CustomerNameSnapshot</td>
-                                    <td>@ticket.CustomerEmailSnapshot</td>
-                                    <td>@ticket.DeviceType</td>
-                                    <td>@ticket.Status</td>
-                                    <td>@ticket.CreatedAt.ToLocalTime().ToShortDateString()</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1"
-                                                @onclick="() => SelectTicket(ticket.Id)">
-                                            View
-                                        </button>
-
-                                        <button class="btn btn-sm btn-outline-danger"
-                                                @onclick="() => DeleteTicket(ticket.Id)">
-                                            Delete
-                                        </button>
+                                    <td colspan="7" class="text-center">
+                                        No active tickets found.
                                     </td>
                                 </tr>
+                            }
+                            else
+                            {
+                                @foreach (var ticket in FilteredTickets)
+                                {
+                                    <tr>
+                                        <td>@ticket.TicketNumber</td>
+                                        <td>@ticket.CustomerNameSnapshot</td>
+                                        <td>@ticket.CustomerEmailSnapshot</td>
+                                        <td>@ticket.DeviceType</td>
+                                        <td>@ticket.Status</td>
+                                        <td>@ticket.CreatedAt.ToLocalTime().ToShortDateString()</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1"
+                                                    @onclick="() => SelectTicket(ticket.Id)">
+                                                View
+                                            </button>
+
+                                            <button class="btn btn-sm btn-outline-danger"
+                                                    @onclick="() => DeleteTicket(ticket.Id)">
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
                             }
                         </tbody>
                     </table>
@@ -148,6 +209,10 @@
 
             @if (SelectedTicket != null)
             {
+                @* =====================================================
+                   TICKET DETAILS PANEL
+                   ===================================================== *@
+
                 <div class="card shadow-sm mb-5">
                     <div class="card-header">
                         <h4>Ticket Details - @SelectedTicket.TicketNumber</h4>
@@ -241,6 +306,10 @@
             }
         }
 
+        @* =====================================================
+           FIRST-TIME CUSTOMERS PANEL
+           ===================================================== *@
+
         @if (CurrentPanel == AdminPanel.FirstTimeCustomers)
         {
             <div class="card shadow-sm mb-5">
@@ -275,6 +344,10 @@
             </div>
         }
 
+        @* =====================================================
+           RETURNING CUSTOMERS PANEL
+           ===================================================== *@
+
         @if (CurrentPanel == AdminPanel.ReturningCustomers)
         {
             <div class="card shadow-sm mb-5">
@@ -308,6 +381,11 @@
                 </div>
             </div>
         }
+
+        @* =====================================================
+           COMPLETED TICKETS PANEL
+           ===================================================== *@
+
         @if (CurrentPanel == AdminPanel.CompletedTickets)
         {
             <div class="card shadow-sm mb-5">
@@ -364,6 +442,10 @@
             </div>
         }
 
+        @* =====================================================
+           ANALYTICS PANEL
+           ===================================================== *@
+
         @if (CurrentPanel == AdminPanel.Analytics)
         {
             <div class="card shadow-sm mb-5">
@@ -375,6 +457,8 @@
                     <p><strong>Total Active Tickets:</strong> @Stats.ActiveTickets</p>
                     <p><strong>Waiting Tickets:</strong> @Stats.WaitingTickets</p>
                     <p><strong>In Progress Tickets:</strong> @Stats.InProgressTickets</p>
+                    <p><strong>Completed Today:</strong> @Stats.CompletedToday</p>
+                    <p><strong>Completed Tickets:</strong> @Stats.CompletedTickets</p>
                     <p><strong>First-Time Customers:</strong> @Stats.FirstTimeCustomers</p>
                     <p><strong>Returning Customers:</strong> @Stats.ReturningCustomers</p>
                     <p><strong>Total Current Revenue:</strong> @Stats.Revenue.ToString("C")</p>
@@ -397,6 +481,10 @@
 
     private AdminPanel CurrentPanel = AdminPanel.ActiveTickets;
 
+    // =====================================================
+    // FILTER ACTIVE TICKETS
+    // =====================================================
+
     private IEnumerable<Ticket> FilteredTickets
     {
         get
@@ -415,10 +503,18 @@
         }
     }
 
+    // =====================================================
+    // LOAD PAGE
+    // =====================================================
+
     protected override async Task OnInitializedAsync()
     {
         await LoadDashboardAsync();
     }
+
+    // =====================================================
+    // LOAD DASHBOARD DATA
+    // =====================================================
 
     private async Task LoadDashboardAsync()
     {
@@ -429,11 +525,19 @@
         FirstTimeCustomers = await AdminService.GetFirstTimeCustomersAsync();
     }
 
+    // =====================================================
+    // SELECT TICKET
+    // =====================================================
+
     private async Task SelectTicket(int id)
     {
         SelectedTicket = await AdminService.GetTicketAsync(id);
         Message = "";
     }
+
+    // =====================================================
+    // SAVE TICKET
+    // =====================================================
 
     private async Task SaveTicket()
     {
@@ -451,6 +555,10 @@
         await LoadDashboardAsync();
     }
 
+    // =====================================================
+    // MARK TICKET IN PROGRESS
+    // =====================================================
+
     private async Task MarkInProgress()
     {
         if (SelectedTicket == null)
@@ -459,6 +567,11 @@
         SelectedTicket.Status = "In Progress";
         await SaveTicket();
     }
+
+    // =====================================================
+    // MARK TICKET COMPLETED
+    // =====================================================
+
     private async Task MarkCompleted()
     {
         if (SelectedTicket == null)
@@ -484,6 +597,10 @@
         StateHasChanged();
     }
 
+    // =====================================================
+    // DELETE TICKET
+    // =====================================================
+
     private async Task DeleteTicket(int id)
     {
         await AdminService.DeleteTicketAsync(id);
@@ -495,6 +612,10 @@
 
         await LoadDashboardAsync();
     }
+
+    // =====================================================
+    // ADMIN PANELS
+    // =====================================================
 
     private enum AdminPanel
     {

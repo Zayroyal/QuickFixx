@@ -1,18 +1,45 @@
-﻿window.qfTheme = {
+﻿// =====================================================
+// QUICKFIX THEME MANAGER
+// =====================================================
+
+window.qfTheme = {
     get: function () {
-        try {
-            return localStorage.getItem("qf_dark") === "1";
-        } catch {
-            return false;
+        const savedTheme = localStorage.getItem("quickfix-theme");
+
+        return savedTheme === "dark";
+    },
+
+    set: function (isDark) {
+        if (isDark) {
+            localStorage.setItem("quickfix-theme", "dark");
+        } else {
+            localStorage.setItem("quickfix-theme", "light");
+        }
+
+        window.qfTheme.apply(isDark);
+    },
+
+    apply: function (isDark) {
+        if (isDark) {
+            document.documentElement.classList.add("dark");
+            document.body.classList.add("dark");
+            document.body.classList.add("dark-mode");
+        } else {
+            document.documentElement.classList.remove("dark");
+            document.body.classList.remove("dark");
+            document.body.classList.remove("dark-mode");
         }
     },
-    set: function (isDark) {
-        try {
-            localStorage.setItem("qf_dark", isDark ? "1" : "0");
-        } catch { }
-    },
-    apply: function (isDark) {
-        document.documentElement.classList.toggle("dark", !!isDark);
-        document.body.classList.toggle("dark", !!isDark);
+
+    load: function () {
+        const isDark = window.qfTheme.get();
+
+        window.qfTheme.apply(isDark);
     }
 };
+
+// =====================================================
+// LOAD THEME IMMEDIATELY
+// =====================================================
+
+window.qfTheme.load();
