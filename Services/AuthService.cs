@@ -59,6 +59,7 @@ namespace BlazorApp2.Services
 
             var user = new AppUser
             {
+                Role = "User",
                 Name = name,
                 Email = email,
                 PasswordHash = hash,

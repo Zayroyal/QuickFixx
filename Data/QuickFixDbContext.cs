@@ -29,11 +29,12 @@ public class QuickFixDbContext : DbContext
             .HasIndex(c => c.Email)
             .IsUnique();
 
+
         modelBuilder.Entity<Ticket>()
-            .HasOne(t => t.Customer)
-            .WithMany()
-            .HasForeignKey(t => t.CustomerId)
-            .OnDelete(DeleteBehavior.SetNull);
+.HasOne(t => t.Customer)
+.WithMany()
+.HasForeignKey(t => t.CustomerId)
+.OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<Repair>()
             .HasOne(r => r.Ticket)

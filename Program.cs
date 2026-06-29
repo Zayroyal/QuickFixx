@@ -22,6 +22,10 @@ builder.Services.AddScoped<TicketServices>();
 //  Auth/Login services (Session-based)
 builder.Services.AddScoped<AuthService>();
 
+//NEW ADMIN TINGS
+builder.Services.AddScoped<AdminService>();
+
+
 //  Session storage + auth state provider
 builder.Services.AddScoped<ProtectedSessionStorage>();
 builder.Services.AddScoped<SessionAuthStateProvider>();

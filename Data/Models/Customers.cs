@@ -6,6 +6,8 @@ namespace BlazorApp2.Data.Models;
 public class Customer
 {
     public int Id { get; set; } // true PK
+    // NEW
+    public int AppUserId { get; set; }
 
     // 8-digit date id (yyyyMMdd). Keep this as a "Customer ID #", not the PK.
     public int CustomerIdDate { get; set; }

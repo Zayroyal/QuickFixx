@@ -34,6 +34,7 @@ namespace BlazorApp2.Auth
                     {
                         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                         new Claim(ClaimTypes.Name, user.Email),
+                        new Claim(ClaimTypes.Role, user.Role)
                     }, authenticationType: "BlazorApp2Session");
 
                     principal = new ClaimsPrincipal(identity);

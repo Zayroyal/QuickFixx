@@ -1,0 +1,431 @@
+﻿
+
+
+@page "/admin"
+@attribute [Authorize(Roles = "Admin")]
+
+@using BlazorApp2.Data.Models
+@using BlazorApp2.Services
+@using Microsoft.AspNetCore.Authorization
+
+@inject AdminService AdminService
+
+<PageTitle>QuickFix Admin</PageTitle>
+
+<div class="container-fluid admin-page">
+
+    <h1 class="mb-4">QuickFix Admin Dashboard</h1>
+
+    @if (!string.IsNullOrWhiteSpace(Message))
+    {
+        <div class="alert alert-info">@Message</div>
+    }
+
+    @if (Stats == null)
+    {
+        <p>Loading admin dashboard...</p>
+    }
+    else
+    {
+        <div class="row g-3 mb-4">
+
+            <div class="col-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6>Active Tickets</h6>
+                        <h2>@Stats.ActiveTickets</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6>Waiting</h6>
+                        <h2>@Stats.WaitingTickets</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6>In Progress</h6>
+                        <h2>@Stats.InProgressTickets</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6>Total Revenue</h6>
+                        <h2>@Stats.Revenue.ToString("C")</h2>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mb-4">
+            <button class="btn btn-primary me-2" @onclick="() => CurrentPanel = AdminPanel.ActiveTickets">
+                Active Tickets
+            </button>
+
+            <button class="btn btn-secondary me-2" @onclick="() => CurrentPanel = AdminPanel.FirstTimeCustomers">
+                First-Time Customers
+            </button>
+
+            <button class="btn btn-secondary me-2" @onclick="() => CurrentPanel = AdminPanel.ReturningCustomers">
+                Returning Customers
+            </button>
+
+            <button class="btn btn-secondary" @onclick="() => CurrentPanel = AdminPanel.Analytics">
+                Analytics
+            </button>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <input class="form-control"
+                       placeholder="Search ticket number, customer, email, device..."
+                       @bind="SearchText"
+                       @bind:event="oninput" />
+            </div>
+        </div>
+
+        @if (CurrentPanel == AdminPanel.ActiveTickets)
+        {
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h4>Active Repair Queue</h4>
+                </div>
+
+                <div class="card-body table-responsive admin-table">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Ticket #</th>
+                                <th>Customer</th>
+                                <th>Email</th>
+                                <th>Device</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var ticket in FilteredTickets)
+                            {
+                                <tr>
+                                    <td>@ticket.TicketNumber</td>
+                                    <td>@ticket.CustomerNameSnapshot</td>
+                                    <td>@ticket.CustomerEmailSnapshot</td>
+                                    <td>@ticket.DeviceType</td>
+                                    <td>@ticket.Status</td>
+                                    <td>@ticket.CreatedAt.ToLocalTime().ToShortDateString()</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1"
+                                                @onclick="() => SelectTicket(ticket.Id)">
+                                            View
+                                        </button>
+
+                                        <button class="btn btn-sm btn-outline-danger"
+                                                @onclick="() => DeleteTicket(ticket.Id)">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @if (SelectedTicket != null)
+            {
+                <div class="card shadow-sm mb-5">
+                    <div class="card-header">
+                        <h4>Ticket Details - @SelectedTicket.TicketNumber</h4>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+                                <label class="form-label">Customer Name</label>
+                                <input class="form-control" @bind="SelectedTicket.CustomerNameSnapshot" />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Customer Email</label>
+                                <input class="form-control" @bind="SelectedTicket.CustomerEmailSnapshot" />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Customer Contact</label>
+                                <input class="form-control" @bind="SelectedTicket.CustomerContactSnapshot" />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Device Type</label>
+                                <input class="form-control" @bind="SelectedTicket.DeviceType" />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" @bind="SelectedTicket.Status">
+                                    <option>Waiting</option>
+                                    <option>In Progress</option>
+                                    <option>Completed</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Total Cost</label>
+                                <input class="form-control" type="number" step="0.01" @bind="SelectedTicket.TotalCost" />
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" rows="3" @bind="SelectedTicket.Description"></textarea>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label">Diagnostic</label>
+                                <textarea class="form-control" rows="3" @bind="SelectedTicket.Diagnostic"></textarea>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Parts Cost</label>
+                                <input class="form-control" type="number" step="0.01" @bind="SelectedTicket.PartsCost" />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Labor Cost</label>
+                                <input class="form-control" type="number" step="0.01" @bind="SelectedTicket.LaborCost" />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Diagnostic Fee</label>
+                                <input class="form-control" type="number" step="0.01" @bind="SelectedTicket.DiagnosticFee" />
+                            </div>
+
+                        </div>
+
+                        <div class="mt-4">
+                            <button class="btn btn-success me-2" @onclick="SaveTicket">
+                                Save Changes
+                            </button>
+
+                            <button class="btn btn-warning me-2" @onclick="MarkInProgress">
+                                Mark In Progress
+                            </button>
+
+                            <button class="btn btn-primary me-2" @onclick="MarkCompleted">
+                                Mark Completed
+                            </button>
+
+                            <button class="btn btn-danger" @onclick="() => DeleteTicket(SelectedTicket.Id)">
+                                Delete Ticket
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        }
+
+        @if (CurrentPanel == AdminPanel.FirstTimeCustomers)
+        {
+            <div class="card shadow-sm mb-5">
+                <div class="card-header">
+                    <h4>First-Time Customers</h4>
+                </div>
+
+                <div class="card-body table-responsive admin-table">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Contact</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var customer in FirstTimeCustomers)
+                            {
+                                <tr>
+                                    <td>@customer.Name</td>
+                                    <td>@customer.Email</td>
+                                    <td>@customer.Contact</td>
+                                    <td>@customer.Created.ToLocalTime().ToShortDateString()</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+        @if (CurrentPanel == AdminPanel.ReturningCustomers)
+        {
+            <div class="card shadow-sm mb-5">
+                <div class="card-header">
+                    <h4>Returning Customers</h4>
+                </div>
+
+                <div class="card-body table-responsive admin-table">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Contact</th>
+                                <th>Customer Since</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var customer in Customers)
+                            {
+                                <tr>
+                                    <td>@customer.Name</td>
+                                    <td>@customer.Email</td>
+                                    <td>@customer.Contact</td>
+                                    <td>@customer.CreatedAt.ToLocalTime().ToShortDateString()</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+        @if (CurrentPanel == AdminPanel.Analytics)
+        {
+            <div class="card shadow-sm mb-5">
+                <div class="card-header">
+                    <h4>Business Analytics</h4>
+                </div>
+
+                <div class="card-body">
+                    <p><strong>Total Active Tickets:</strong> @Stats.ActiveTickets</p>
+                    <p><strong>Waiting Tickets:</strong> @Stats.WaitingTickets</p>
+                    <p><strong>In Progress Tickets:</strong> @Stats.InProgressTickets</p>
+                    <p><strong>First-Time Customers:</strong> @Stats.FirstTimeCustomers</p>
+                    <p><strong>Returning Customers:</strong> @Stats.ReturningCustomers</p>
+                    <p><strong>Total Current Revenue:</strong> @Stats.Revenue.ToString("C")</p>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private DashboardStats? Stats;
+    private List<Ticket> Tickets = new();
+    private List<Customer> Customers = new();
+    private List<FirstTimeCustomer> FirstTimeCustomers = new();
+
+    private Ticket? SelectedTicket;
+    private string SearchText = "";
+    private string Message = "";
+
+    private AdminPanel CurrentPanel = AdminPanel.ActiveTickets;
+
+    private IEnumerable<Ticket> FilteredTickets
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+                return Tickets;
+
+            var search = SearchText.Trim().ToLowerInvariant();
+
+            return Tickets.Where(t =>
+                (t.TicketNumber ?? "").ToLowerInvariant().Contains(search) ||
+                (t.CustomerNameSnapshot ?? "").ToLowerInvariant().Contains(search) ||
+                (t.CustomerEmailSnapshot ?? "").ToLowerInvariant().Contains(search) ||
+                (t.DeviceType ?? "").ToLowerInvariant().Contains(search) ||
+                (t.Status ?? "").ToLowerInvariant().Contains(search));
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDashboardAsync();
+    }
+
+    private async Task LoadDashboardAsync()
+    {
+        Stats = await AdminService.GetDashboardStatsAsync();
+        Tickets = await AdminService.GetActiveTicketsAsync();
+        Customers = await AdminService.GetCustomersAsync();
+        FirstTimeCustomers = await AdminService.GetFirstTimeCustomersAsync();
+    }
+
+    private async Task SelectTicket(int id)
+    {
+        SelectedTicket = await AdminService.GetTicketAsync(id);
+        Message = "";
+    }
+
+    private async Task SaveTicket()
+    {
+        if (SelectedTicket == null)
+            return;
+
+        SelectedTicket.TotalCost =
+            SelectedTicket.PartsCost +
+            SelectedTicket.LaborCost +
+            SelectedTicket.DiagnosticFee;
+
+        await AdminService.UpdateTicketAsync(SelectedTicket);
+        Message = "Ticket updated successfully.";
+
+        await LoadDashboardAsync();
+    }
+
+    private async Task MarkInProgress()
+    {
+        if (SelectedTicket == null)
+            return;
+
+        SelectedTicket.Status = "In Progress";
+        await SaveTicket();
+    }
+
+    private async Task MarkCompleted()
+    {
+        if (SelectedTicket == null)
+            return;
+
+        SelectedTicket.Status = "Completed";
+        await SaveTicket();
+    }
+
+    private async Task DeleteTicket(int id)
+    {
+        await AdminService.DeleteTicketAsync(id);
+
+        if (SelectedTicket?.Id == id)
+            SelectedTicket = null;
+
+        Message = "Ticket deleted successfully.";
+
+        await LoadDashboardAsync();
+    }
+
+    private enum AdminPanel
+    {
+        ActiveTickets,
+        FirstTimeCustomers,
+        ReturningCustomers,
+        Analytics
+    }
+}

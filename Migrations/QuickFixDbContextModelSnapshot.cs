@@ -45,6 +45,10 @@ namespace BlazorApp2.Migrations
                         .IsRequired()
                         .HasColumnType("BLOB");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
@@ -57,6 +61,9 @@ namespace BlazorApp2.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AppUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Contact")
@@ -89,6 +96,9 @@ namespace BlazorApp2.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AppUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Contact")

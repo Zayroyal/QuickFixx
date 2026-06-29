@@ -13,5 +13,10 @@
 
         public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
         public DateTime LastLoginUtc { get; set; } = DateTime.UtcNow;
+
+
+        //NEW
+
+        public string Role { get; set; } = "User";
     }
 }
