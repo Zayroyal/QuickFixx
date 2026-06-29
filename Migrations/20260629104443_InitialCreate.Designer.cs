@@ -146,7 +146,7 @@ namespace BlazorApp2.Migrations
                     b.ToTable("Repairs");
                 });
 
-            modelBuilder.Entity("BlazorApp2.Data.Models.Ticket", b =>
+            modelBuilder.Entity(".Data.Models.Ticket", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
