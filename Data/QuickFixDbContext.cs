@@ -1,7 +1,7 @@
-﻿using BlazorApp2.Data.Models;
+﻿using QuickFix.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlazorApp2.Data;
+namespace QuickFix.Data;
 
 public class QuickFixDbContext : DbContext
 {

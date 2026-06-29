@@ -19,4 +19,6 @@
 		</PackageReference>
 	</ItemGroup>
 
+	<ProjectExtensions><VisualStudio><UserProperties wwwroot_4data_4gradea_3pricing_1json__JsonSchema="https://api.bluebricks.co/docs/schemas/latest/bricks.schema.json" /></VisualStudio></ProjectExtensions>
+
 </Project>

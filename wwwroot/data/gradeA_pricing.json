@@ -1,11 +1,9 @@
 {
   "version": 1,
   "currency": "USD",
-
   "rules": [
-   
     {
-      "deviceContains": "Apple - iPhone - 8",
+      "deviceContains": "Apple - iPhone 8",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -14,10 +12,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 110.0 }
+      "labor": {
+        "price": 110.0
+      }
     },
     {
-      "deviceContains": "Apple - iPhone - iPhone 8",
+      "deviceContains": "Apple - iPhone 8",
       "diagnostic": "Battery Issue",
       "part": {
         "grade": "A",
@@ -26,11 +26,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 75.0 }
+      "labor": {
+        "price": 75.0
+      }
     },
-
     {
-      "deviceContains": "Apple - iPhone - iPhone X",
+      "deviceContains": "Apple - iPhone X",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -39,10 +40,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 125.0 }
+      "labor": {
+        "price": 125.0
+      }
     },
     {
-      "deviceContains": "Apple - iPhone - iPhone 11",
+      "deviceContains": "Apple - iPhone 11",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -51,11 +54,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 130.0 }
+      "labor": {
+        "price": 130.0
+      }
     },
-
     {
-      "deviceContains": "Apple - iPhone - iPhone 12",
+      "deviceContains": "Apple - iPhone 12",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -64,10 +68,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 150.0 }
+      "labor": {
+        "price": 150.0
+      }
     },
     {
-      "deviceContains": "Apple - iPhone - iPhone 13",
+      "deviceContains": "Apple - iPhone 13",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -76,11 +82,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 155.0 }
+      "labor": {
+        "price": 155.0
+      }
     },
-
     {
-      "deviceContains": "Apple - iPhone - iPhone 14",
+      "deviceContains": "Apple - iPhone 14",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -89,10 +96,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 170.0 }
+      "labor": {
+        "price": 170.0
+      }
     },
     {
-      "deviceContains": "Apple - iPhone - iPhone 15",
+      "deviceContains": "Apple - iPhone 15",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -101,11 +110,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 180.0 }
+      "labor": {
+        "price": 180.0
+      }
     },
-
     {
-      "deviceContains": "Apple - iPhone - iPhone 16",
+      "deviceContains": "Apple - iPhone 16",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -114,10 +124,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 200.0 }
+      "labor": {
+        "price": 200.0
+      }
     },
     {
-      "deviceContains": "Apple - iPhone - iPhone 17",
+      "deviceContains": "Apple - iPhone 17",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -126,10 +138,10 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 220.0 }
+      "labor": {
+        "price": 220.0
+      }
     },
-
-  
     {
       "category": "Apple - iPhone",
       "diagnostic": "Charging Port",
@@ -140,7 +152,9 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 120.0 }
+      "labor": {
+        "price": 120.0
+      }
     },
     {
       "category": "Apple - iPhone",
@@ -152,7 +166,9 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 130.0 }
+      "labor": {
+        "price": 130.0
+      }
     },
     {
       "category": "Apple - iPhone",
@@ -160,11 +176,13 @@
       "part": {
         "grade": "A",
         "name": "Cleaning Materials (Grade A)",
-        "price": 15.00,
+        "price": 15.0,
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 180.0 }
+      "labor": {
+        "price": 180.0
+      }
     },
     {
       "category": "Apple - iPhone",
@@ -176,7 +194,9 @@
         "source": "",
         "referenceUrl": ""
       },
-      "labor": { "price": 140.0 }
+      "labor": {
+        "price": 140.0
+      }
     },
     {
       "category": "Apple - iPhone",
@@ -188,12 +208,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 90.0 }
+      "labor": {
+        "price": 90.0
+      }
     },
-
-
     {
-      "deviceContains": "Samsung - Galaxy S Series - Galaxy S8",
+      "deviceContains": "Samsung - Galaxy S8",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -202,10 +222,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 150.0 }
+      "labor": {
+        "price": 150.0
+      }
     },
     {
-      "deviceContains": "Samsung - Galaxy S Series - Galaxy S10",
+      "deviceContains": "Samsung - Galaxy S10",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -214,10 +236,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 170.0 }
+      "labor": {
+        "price": 170.0
+      }
     },
     {
-      "deviceContains": "Samsung - Galaxy S Series - Galaxy S20",
+      "deviceContains": "Samsung - Galaxy S20",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -226,10 +250,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 190.0 }
+      "labor": {
+        "price": 190.0
+      }
     },
     {
-      "deviceContains": "Samsung - Galaxy S Series - Galaxy S21",
+      "deviceContains": "Samsung - Galaxy S21",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -238,10 +264,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 195.0 }
+      "labor": {
+        "price": 195.0
+      }
     },
     {
-      "deviceContains": "Samsung - Galaxy S Series - Galaxy S22",
+      "deviceContains": "Samsung - Galaxy S22",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -250,10 +278,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 210.0 }
+      "labor": {
+        "price": 210.0
+      }
     },
     {
-      "deviceContains": "Samsung - Galaxy S Series - Galaxy S23",
+      "deviceContains": "Samsung - Galaxy S23",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -262,10 +292,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 220.0 }
+      "labor": {
+        "price": 220.0
+      }
     },
     {
-      "deviceContains": "Samsung - Galaxy S Series - Galaxy S24",
+      "deviceContains": "Samsung - Galaxy S24",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -274,9 +306,10 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 240.0 }
+      "labor": {
+        "price": 240.0
+      }
     },
-
     {
       "category": "Samsung - Galaxy S Series",
       "diagnostic": "Battery Issue",
@@ -287,7 +320,9 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 95.0 }
+      "labor": {
+        "price": 95.0
+      }
     },
     {
       "category": "Samsung - Galaxy S Series",
@@ -299,7 +334,9 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 120.0 }
+      "labor": {
+        "price": 120.0
+      }
     },
     {
       "category": "Samsung - Galaxy S Series",
@@ -311,7 +348,9 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 135.0 }
+      "labor": {
+        "price": 135.0
+      }
     },
     {
       "category": "Samsung - Galaxy S Series",
@@ -319,11 +358,13 @@
       "part": {
         "grade": "A",
         "name": "Cleaning Materials (Grade A)",
-        "price": 15.00,
+        "price": 15.0,
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 190.0 }
+      "labor": {
+        "price": 190.0
+      }
     },
     {
       "category": "Samsung - Galaxy S Series",
@@ -335,12 +376,12 @@
         "source": "",
         "referenceUrl": ""
       },
-      "labor": { "price": 150.0 }
+      "labor": {
+        "price": 150.0
+      }
     },
-
- 
     {
-      "deviceContains": "Google - Pixel - Pixel 6",
+      "deviceContains": "Google - Pixel 6",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -349,10 +390,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 170.0 }
+      "labor": {
+        "price": 170.0
+      }
     },
     {
-      "deviceContains": "Google - Pixel - Pixel 7",
+      "deviceContains": "Google - Pixel 7",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -361,10 +404,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 180.0 }
+      "labor": {
+        "price": 180.0
+      }
     },
     {
-      "deviceContains": "Google - Pixel - Pixel 8",
+      "deviceContains": "Google - Pixel 8",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -373,10 +418,12 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 200.0 }
+      "labor": {
+        "price": 200.0
+      }
     },
     {
-      "deviceContains": "Google - Pixel - Pixel 9",
+      "deviceContains": "Google - Pixel 9",
       "diagnostic": "Cracked Screen",
       "part": {
         "grade": "A",
@@ -385,9 +432,10 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 215.0 }
+      "labor": {
+        "price": 215.0
+      }
     },
-
     {
       "category": "Google - Pixel",
       "diagnostic": "Battery Issue",
@@ -398,7 +446,9 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 95.0 }
+      "labor": {
+        "price": 95.0
+      }
     },
     {
       "category": "Google - Pixel",
@@ -410,7 +460,9 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 120.0 }
+      "labor": {
+        "price": 120.0
+      }
     },
     {
       "category": "Google - Pixel",
@@ -422,7 +474,9 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 135.0 }
+      "labor": {
+        "price": 135.0
+      }
     },
     {
       "category": "Google - Pixel",
@@ -434,7 +488,9 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 185.0 }
+      "labor": {
+        "price": 185.0
+      }
     },
     {
       "category": "Google - Pixel",
@@ -446,9 +502,10 @@
         "source": "",
         "referenceUrl": ""
       },
-      "labor": { "price": 150.0 }
+      "labor": {
+        "price": 150.0
+      }
     },
-
     {
       "category": "Windows Laptop",
       "diagnostic": "Laptop Screen",
@@ -459,7 +516,9 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 220.0 }
+      "labor": {
+        "price": 220.0
+      }
     },
     {
       "category": "Mac Laptop",
@@ -471,10 +530,10 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 280.0 }
+      "labor": {
+        "price": 280.0
+      }
     },
-
-
     {
       "category": "Other Services",
       "diagnostic": "Website Build",
@@ -485,7 +544,9 @@
         "source": "",
         "referenceUrl": ""
       },
-      "labor": { "price": 900.0 }
+      "labor": {
+        "price": 900.0
+      }
     },
     {
       "category": "Other Services",
@@ -497,10 +558,11 @@
         "source": "",
         "referenceUrl": ""
       },
-      "labor": { "price": 150.0 }
+      "labor": {
+        "price": 150.0
+      }
     }
   ],
-
   "diagnosticDefaults": [
     {
       "diagnostic": "Cracked Screen",
@@ -511,7 +573,9 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 140.0 }
+      "labor": {
+        "price": 140.0
+      }
     },
     {
       "diagnostic": "Battery Issue",
@@ -522,18 +586,22 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 90.0 }
+      "labor": {
+        "price": 90.0
+      }
     },
     {
       "diagnostic": "Water Damage",
       "part": {
         "grade": "A",
         "name": "Cleaning Materials (Grade A)",
-        "price": 15.00,
+        "price": 15.0,
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 180.0 }
+      "labor": {
+        "price": 180.0
+      }
     },
     {
       "diagnostic": "Boot Loop",
@@ -544,7 +612,9 @@
         "source": "",
         "referenceUrl": ""
       },
-      "labor": { "price": 140.0 }
+      "labor": {
+        "price": 140.0
+      }
     },
     {
       "diagnostic": "Charging Port",
@@ -555,7 +625,9 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 120.0 }
+      "labor": {
+        "price": 120.0
+      }
     },
     {
       "diagnostic": "Camera Failure",
@@ -566,7 +638,9 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 130.0 }
+      "labor": {
+        "price": 130.0
+      }
     },
     {
       "diagnostic": "Laptop Screen",
@@ -577,7 +651,9 @@
         "source": "Amazon",
         "referenceUrl": ""
       },
-      "labor": { "price": 220.0 }
+      "labor": {
+        "price": 220.0
+      }
     },
     {
       "diagnostic": "Website Build",
@@ -588,7 +664,9 @@
         "source": "",
         "referenceUrl": ""
       },
-      "labor": { "price": 900.0 }
+      "labor": {
+        "price": 900.0
+      }
     },
     {
       "diagnostic": "Website Bug Fix",
@@ -599,7 +677,9 @@
         "source": "",
         "referenceUrl": ""
       },
-      "labor": { "price": 150.0 }
+      "labor": {
+        "price": 150.0
+      }
     }
   ]
 }

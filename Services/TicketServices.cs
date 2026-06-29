@@ -1,8 +1,8 @@
-﻿using BlazorApp2.Data;
-using BlazorApp2.Data.Models;
+﻿using QuickFix.Data;
+using QuickFix.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlazorApp2.Services;
+namespace QuickFix.Services;
 
 public class TicketServices
 {

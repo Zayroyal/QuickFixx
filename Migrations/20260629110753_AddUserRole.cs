@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace BlazorApp2.Migrations
+namespace QuickFix.Migrations
 {
     /// <inheritdoc />
     public partial class AddUserRole : Migration

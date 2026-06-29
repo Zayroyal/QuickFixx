@@ -1,10 +1,10 @@
-using BlazorApp2.Components;
-using BlazorApp2.Data;
+using QuickFix.Components;
+using QuickFix.Data;
 using Microsoft.EntityFrameworkCore;
-using BlazorApp2.Services;
+using QuickFix.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using BlazorApp2.Auth;
+using QuickFix.Auth;
 
 
 var builder = WebApplication.CreateBuilder(args);
