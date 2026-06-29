@@ -41,7 +41,12 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<DeviceCatalogService>();
 builder.Services.AddScoped<GradeAPricingService>();
 builder.Services.AddScoped<TicketServices>();
+var port = Environment.GetEnvironmentVariable("PORT");
 
+if (!string.IsNullOrWhiteSpace(port))
+{
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+}
 
 var app = builder.Build();
 
