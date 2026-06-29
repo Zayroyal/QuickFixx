@@ -69,8 +69,8 @@ using (var scope = app.Services.CreateScope())
         db.Database.Migrate();
 
         var admin = db.Users.FirstOrDefault(u => u.Email == "immanuellipscomb11@gmail.com");
-
-        if (admin != null)
+    Console.WriteLine($"ADMIN SEED CHECK: {admin?.Email} role = {admin?.Role}");
+    if (admin != null)
         {
             admin.Role = "Admin";
             db.SaveChanges();
