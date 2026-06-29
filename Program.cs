@@ -22,6 +22,10 @@ builder.Services.AddScoped<TicketServices>();
 //  Auth/Login services (Session-based)
 builder.Services.AddScoped<AuthService>();
 
+//NEW ADMIN TINGS
+builder.Services.AddScoped<AdminService>();
+
+
 //  Session storage + auth state provider
 builder.Services.AddScoped<ProtectedSessionStorage>();
 builder.Services.AddScoped<SessionAuthStateProvider>();
@@ -34,6 +38,9 @@ builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
 //  Enables [Authorize] + <AuthorizeView> in Razor Components
 builder.Services.AddAuthorizationCore();
 
+builder.Services.AddScoped<DeviceCatalogService>();
+builder.Services.AddScoped<GradeAPricingService>();
+builder.Services.AddScoped<TicketServices>();
 
 
 var app = builder.Build();

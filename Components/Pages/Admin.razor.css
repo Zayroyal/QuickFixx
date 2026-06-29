@@ -1,0 +1,10 @@
+﻿.admin-page {
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+    padding: 24px;
+}
+
+.admin-table {
+    max-height: 450px;
+    overflow-y: auto;
+}

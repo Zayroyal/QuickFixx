@@ -1,15 +1,135 @@
 ﻿@page "/"
+
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Routing
 @inject BlazorApp2.Services.AuthService Auth
+@inject BlazorApp2.Services.TicketServices TicketService
+@inject IJSRuntime JS
 
 <PageTitle>Home</PageTitle>
 
-<h1 class="home-title">Welcome, @DisplayName</h1>
+<div class="dash">
+    <!-- Header -->
+    <div class="dash-hero">
+        <div class="dash-hero-left">
+            <div class="brand-chip">
+                <span class="brand-dot"></span>
+                <span>QuickFix</span>
+            </div>
 
-<p class="home-sub">
-    You're logged in!!!
-</p>
+            <h1 class="dash-title">Welcome back, @DisplayName</h1>
+            <p class="dash-sub">Here’s what you’re working on right now.</p>
+        </div>
+
+        <div class="dash-hero-right">
+            <NavLink class="qf-btn primary" href="/tickets/new">+ Create Ticket</NavLink>
+            <a class="qf-btn ghost" href="/settings">Settings</a>
+        </div>
+    </div>
+
+    <!-- Switcher -->
+    <div class="dash-switch">
+    <button class="switch-btn @(ViewMode == "current" ? "active" : "")"
+            @onclick="@(() => SetMode("current"))">
+        Current Tickets
+        <span class="count">@CurrentTickets.Count</span>
+    </button>
+
+    <button class="switch-btn @(ViewMode == "old" ? "active" : "")"
+            @onclick="@(() => SetMode("old"))">
+        Previous Tickets
+        <span class="count">@OldTickets.Count</span>
+    </button>
+</div>
+
+
+    <!-- Content -->
+    @if (IsLoading)
+    {
+        <div class="grid">
+            @for (int i = 0; i < 6; i++)
+            {
+                <div class="ticket-card skeleton">
+                    <div class="sk-line w60"></div>
+                    <div class="sk-line w40"></div>
+                    <div class="sk-line w80"></div>
+                    <div class="sk-line w50"></div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        var list = FilteredTickets;
+
+        if (list.Count == 0)
+        {
+            <div class="empty">
+                <div class="empty-icon">🧾</div>
+                <div class="empty-title">No tickets found</div>
+                <div class="empty-sub">
+                    Try another search, or create a new ticket.
+                </div>
+                <NavLink class="qf-btn primary" href="/tickets/new">+ Create Ticket</NavLink>
+            </div>
+        }
+        else
+        {
+            <div class="grid">
+                @foreach (var t in list)
+                {
+                    <a class="ticket-card @(t.Status == "In Progress" ? "pulse" : "")"
+                       href="@GetTicketRoute(t)">
+                        <div class="ticket-top">
+                            <div class="ticket-title">@t.Title</div>
+
+                            <div class="ticket-actions">
+                                <div class="status @(t.StatusCss)">@t.Status</div>
+
+                                @if (ViewMode == "current" && t.Status == "Waiting")
+
+                                {
+                                    <button class="ticket-delete"
+                                            title="Delete ticket"
+                                            @onclick:stopPropagation="true"
+                                            @onclick="() => DeleteTicketAsync(t.Id)">
+                                        🗑
+                                    </button>
+                                }
+                            </div>
+                        </div>
+
+
+                        <div class="ticket-mid">
+                       
+                            <div class="meta">
+                                <div class="meta-label">Device</div>
+                                <div class="meta-val">@t.Device</div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-bot">
+                            <div class="meta small">
+                                <span class="meta-label">Ticket #</span>
+                                <span class="meta-val">@t.TicketNumber</span>
+                            </div>
+
+                            <div class="meta small">
+                                <span class="meta-label">Last Update</span>
+                                <span class="meta-val">@t.LastUpdate</span>
+                            </div>
+
+                            <div class="go">›</div>
+                        </div>
+
+                        <div class="card-shine"></div>
+                    </a>
+                }
+            </div>
+        }
+    }
+</div>
 
 @code {
     [CascadingParameter]
@@ -17,23 +137,156 @@
 
     private string DisplayName = "User";
 
+    private bool IsLoading = true;
+    private string ViewMode = "current"; // current | old
+    private string SearchText = "";
+
+    // Real tickets (loaded from DB)
+    private List<TicketVm> CurrentTickets = new();
+    private List<TicketVm> OldTickets = new();
+
+    private List<TicketVm> FilteredTickets
+    {
+        get
+        {
+            var baseList = (ViewMode == "current") ? CurrentTickets : OldTickets;
+
+            if (string.IsNullOrWhiteSpace(SearchText))
+                return baseList;
+
+            var s = SearchText.Trim().ToLowerInvariant();
+            return baseList
+                .Where(x =>
+                    (x.Title ?? "").ToLowerInvariant().Contains(s) ||
+                    (x.Device ?? "").ToLowerInvariant().Contains(s) ||
+                    (x.TicketNumber ?? "").ToLowerInvariant().Contains(s))
+                .ToList();
+        }
+    }
+    private async Task DeleteTicketAsync(int ticketId)
+    {
+        var authState = await AuthenticationStateTask!;
+        var user = authState.User;
+
+        var idText = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!int.TryParse(idText, out var userId))
+            return;
+
+        if (!await JS.InvokeAsync<bool>("confirm", "Delete this ticket? This cannot be undone."))
+            return;
+
+        await TicketService.DeleteTicketAsync(ticketId, userId);
+
+        // Remove from UI immediately
+        CurrentTickets.RemoveAll(t => t.Id == ticketId);
+        OldTickets.RemoveAll(t => t.Id == ticketId);
+
+        StateHasChanged();
+    }
+
     protected override async Task OnInitializedAsync()
     {
+        IsLoading = true;
+
         var authState = await (AuthenticationStateTask
             ?? Task.FromResult(new AuthenticationState(new ClaimsPrincipal())));
 
         var principal = authState.User;
-
-        // We store the user Id in this claim (you already do this in SessionAuthStateProvider)
         var idText = principal.FindFirstValue(ClaimTypes.NameIdentifier);
 
+        // If not logged in, show empty state safely
         if (!int.TryParse(idText, out var userId) || userId <= 0)
+        {
+            CurrentTickets = new();
+            OldTickets = new();
+            IsLoading = false;
             return;
+        }
 
-        // Pull the real user row from the DB and use Name
+        // Display name
         var dbUser = await Auth.GetByIdAsync(userId);
-
         if (dbUser != null && !string.IsNullOrWhiteSpace(dbUser.Name))
             DisplayName = dbUser.Name.Trim();
+
+        // Keep your shimmer feel
+        await Task.Delay(650);
+
+        // Load THIS user's tickets from DB
+        var current = await TicketService.GetUserCurrentTicketsAsync(userId);
+        var old = await TicketService.GetUserOldTicketsAsync(userId);
+
+        CurrentTickets = current.Select(MapTicket).ToList();
+        OldTickets = old.Select(MapTicket).ToList();
+
+        IsLoading = false;
     }
+
+    private void SetMode(string mode)
+    {
+        ViewMode = mode;
+        StateHasChanged();
+    }
+
+    private TicketVm MapTicket(BlazorApp2.Data.Models.Ticket t)
+    {
+        var status = string.IsNullOrWhiteSpace(t.Status) ? "Waiting" : t.Status.Trim();
+
+        return new TicketVm(
+    t.Id,
+    BuildTitle(t),
+    status,
+    StatusCss(status),
+    t.DeviceType ?? "",
+    string.IsNullOrWhiteSpace(t.TicketNumber) ? $"#{t.Id}" : t.TicketNumber,
+    (t.UpdatedAt == default ? t.CreatedAt : t.UpdatedAt)
+        .ToLocalTime()
+        .ToString("MMM d, yyyy")
+);
+
+    }
+
+
+    private string BuildTitle(BlazorApp2.Data.Models.Ticket t)
+    {
+        var diag = t.Diagnostic?.Trim();
+        var dev = t.DeviceType?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(diag) && !string.IsNullOrWhiteSpace(dev))
+            return $"{diag} - {dev}";
+        if (!string.IsNullOrWhiteSpace(dev))
+            return dev;
+        if (!string.IsNullOrWhiteSpace(diag))
+            return diag;
+
+        return string.IsNullOrWhiteSpace(t.Description) ? "Ticket" : t.Description!;
+    }
+
+    private string StatusCss(string status)
+    {
+        return status switch
+        {
+            "In Progress" => "status-progress",
+            "Completed" => "status-done",
+            _ => "status-wait"
+        };
+    }
+
+
+    // For now routes don’t need to exist — it can just point to a placeholder page later
+    private string GetTicketRoute(TicketVm t)
+    {
+        // later you can route to /ticket/{id}
+        return "javascript:void(0)";
+    }
+
+    private record TicketVm(
+     int Id,
+     string Title,
+     string Status,
+     string StatusCss,
+     string Device,
+     string TicketNumber,
+     string LastUpdate
+ );
+
 }

@@ -16,39 +16,34 @@ public class TicketServices
     private static int TodayCustomerIdDate()
         => int.Parse(DateTime.UtcNow.ToString("yyyyMMdd"));
 
-    /// <summary>
-    /// Rule:
-    /// - 1st ticket with a new email -> goes into FirstTimeCustomers only (no Customers row yet)
-    /// - 2nd ticket with same email -> promote/move to Customers, remove from FirstTimeCustomers
-    /// </summary>
+    private const decimal HARD_DIAGNOSTIC_FEE = 25m;
+
+    // -------------------------------------------------
+    // CREATE BASIC TICKET (no costs)
+    // -------------------------------------------------
     public async Task<int> CreateTicketAsync(
-        int createdByUserId, // NEW: logged-in user id
+        int createdByUserId,
         string customerName,
         string customerContact,
         string customerEmail,
-        string title,
         string? description)
     {
         customerEmail = customerEmail.Trim().ToLowerInvariant();
 
         await using var tx = await _db.Database.BeginTransactionAsync();
 
-        // 1) Check Customers first
         var customer = await _db.Customers.FirstOrDefaultAsync(c => c.Email == customerEmail);
 
-        // 2) If not in Customers, check FirstTimeCustomers
         var firstTime = customer == null
             ? await _db.FirstTimeCustomers.FirstOrDefaultAsync(c => c.Email == customerEmail)
             : null;
 
         int? linkCustomerId = null;
 
-        // CASE A: already a Customer
         if (customer != null)
         {
             linkCustomerId = customer.Id;
         }
-        // CASE B: first time seeing this email -> create FirstTimeCustomer only
         else if (firstTime == null)
         {
             firstTime = new FirstTimeCustomer
@@ -61,14 +56,9 @@ public class TicketServices
 
             _db.FirstTimeCustomers.Add(firstTime);
             await _db.SaveChangesAsync();
-
-            // Not promoted yet
-            linkCustomerId = null;
         }
-        // CASE C: email exists in FirstTimeCustomers -> 2nd ticket -> promote to Customers
         else
         {
-            // Keep latest contact info
             firstTime.Name = customerName;
             firstTime.Contact = customerContact;
             await _db.SaveChangesAsync();
@@ -90,22 +80,27 @@ public class TicketServices
             linkCustomerId = promoted.Id;
         }
 
-        // 3) Create ticket (link only if customer exists/promoted)
+        var now = DateTime.UtcNow;
+
         var ticket = new Ticket
         {
-            CreatedByUserId = createdByUserId, // NEW: store the logged-in user id
+            CreatedByUserId = createdByUserId,
             CustomerId = linkCustomerId,
-            Title = title,
             Description = description,
             CustomerNameSnapshot = customerName,
             CustomerContactSnapshot = customerContact,
-            CustomerEmailSnapshot = customerEmail
+            CustomerEmailSnapshot = customerEmail,
+            Status = "Waiting",
+            CreatedAt = now,
+            UpdatedAt = now
         };
 
         _db.Tickets.Add(ticket);
         await _db.SaveChangesAsync();
 
-        // 4) Create repair record from description (optional)
+        ticket.TicketNumber = $"QF-{ticket.Id:D4}";
+        await _db.SaveChangesAsync();
+
         if (!string.IsNullOrWhiteSpace(description))
         {
             _db.Repairs.Add(new Repair
@@ -120,25 +115,66 @@ public class TicketServices
         return ticket.Id;
     }
 
+    // -------------------------------------------------
+    // DELETE TICKET (user-owned only)
+    // -------------------------------------------------
+    public async Task DeleteTicketAsync(int ticketId, int requestingUserId)
+    {
+        var ticket = await _db.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId);
+        if (ticket == null)
+            throw new Exception("Ticket not found.");
+
+        if (ticket.CreatedByUserId != requestingUserId)
+            throw new Exception("Not authorized to delete this ticket.");
+
+        var repairs = await _db.Repairs
+            .Where(r => r.TicketId == ticketId)
+            .ToListAsync();
+
+        if (repairs.Any())
+            _db.Repairs.RemoveRange(repairs);
+
+        _db.Tickets.Remove(ticket);
+        await _db.SaveChangesAsync();
+    }
+
+    // -------------------------------------------------
+    // USER TICKET QUERIES
+    // -------------------------------------------------
+    public Task<List<Ticket>> GetUserCurrentTicketsAsync(int userId)
+        => _db.Tickets
+            .Where(t => t.CreatedByUserId == userId && t.Status != "Completed")
+            .OrderByDescending(t => t.UpdatedAt)
+            .ToListAsync();
+
+    public Task<List<Ticket>> GetUserOldTicketsAsync(int userId)
+        => _db.Tickets
+            .Where(t => t.CreatedByUserId == userId && t.Status == "Completed")
+            .OrderByDescending(t => t.UpdatedAt)
+            .ToListAsync();
+
+    // -------------------------------------------------
+    // ADMIN / GENERAL QUERY
+    // -------------------------------------------------
     public Task<List<Ticket>> GetTicketsAsync()
         => _db.Tickets
-              .Include(t => t.Customer)
-              .OrderByDescending(t => t.CreatedAt)
-              .ToListAsync();
+            .Include(t => t.Customer)
+            .OrderByDescending(t => t.Id)
+            .ToListAsync();
 
+    // -------------------------------------------------
+    // CREATE TICKET WITH COSTS
+    // -------------------------------------------------
     public async Task<int> CreateTicketWithCostAsync(
-        int createdByUserId, // NEW: logged-in user id
+        int createdByUserId,
         string customerName,
         string customerContact,
         string customerEmail,
-        string title,
         string? description,
         string? deviceType,
         string? diagnostic,
         decimal partsCost,
-        decimal laborCost,
-        decimal diagnosticFee,
-        decimal totalCost)
+        decimal laborCost)
     {
         customerEmail = customerEmail.Trim().ToLowerInvariant();
 
@@ -152,17 +188,15 @@ public class TicketServices
 
         int? linkCustomerId = null;
 
-        // A) already a Customer
         if (customer != null)
         {
             linkCustomerId = customer.Id;
         }
-        // B) first time seeing this email -> create FirstTimeCustomer only
         else if (firstTime == null)
         {
             firstTime = new FirstTimeCustomer
             {
-                CustomerIdDate = int.Parse(DateTime.UtcNow.ToString("yyyyMMdd")),
+                CustomerIdDate = TodayCustomerIdDate(),
                 Name = customerName,
                 Contact = customerContact,
                 Email = customerEmail
@@ -170,10 +204,7 @@ public class TicketServices
 
             _db.FirstTimeCustomers.Add(firstTime);
             await _db.SaveChangesAsync();
-
-            linkCustomerId = null;
         }
-        // C) email exists in FirstTimeCustomers -> 2nd ticket -> promote to Customers
         else
         {
             firstTime.Name = customerName;
@@ -197,29 +228,34 @@ public class TicketServices
             linkCustomerId = promoted.Id;
         }
 
+        var diagnosticFee = HARD_DIAGNOSTIC_FEE;
+        var totalCost = partsCost + laborCost + diagnosticFee;
+        var now = DateTime.UtcNow;
+
         var ticket = new Ticket
         {
-            CreatedByUserId = createdByUserId, // NEW: store the logged-in user id
+            CreatedByUserId = createdByUserId,
             CustomerId = linkCustomerId,
-
-            Title = title,
             Description = description,
-
             DeviceType = deviceType,
             Diagnostic = diagnostic,
-
             PartsCost = partsCost,
             LaborCost = laborCost,
             DiagnosticFee = diagnosticFee,
             TotalCost = totalCost,
-
-            // keep snapshots (your current flow)
             CustomerNameSnapshot = customerName,
             CustomerContactSnapshot = customerContact,
-            CustomerEmailSnapshot = customerEmail
+            CustomerEmailSnapshot = customerEmail,
+            Status = "Waiting",
+            CreatedAt = now,
+            UpdatedAt = now
         };
 
         _db.Tickets.Add(ticket);
+        await _db.SaveChangesAsync();
+
+        ticket.TicketNumber = $"QF-{ticket.Id:D4}";
+        ticket.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync();
 
         if (!string.IsNullOrWhiteSpace(description))

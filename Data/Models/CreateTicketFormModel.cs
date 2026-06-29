@@ -12,7 +12,7 @@ public class CreateTicketFormModel
     public string Email { get; set; } = "";
 
     // Ticket
-    [Required] public string Title { get; set; } = "";
+
     public string? DeviceType { get; set; }
     public string? Diagnostic { get; set; }
 
