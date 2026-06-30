@@ -62,10 +62,11 @@ using (var scope = app.Services.CreateScope())
 
     if (admin == null)
     {
-        admin = await auth.RegisterAsync(adminName, adminEmail, adminPassword);
+        var result = await auth.RegisterAsync(adminName, adminEmail, adminPassword);
 
-        if (admin != null)
+        if (result.ok && result.user != null)
         {
+            admin = result.user;
             admin.Role = "Admin";
             db.SaveChanges();
         }
