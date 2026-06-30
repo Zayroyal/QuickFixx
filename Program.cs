@@ -6,41 +6,35 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using QuickFix.Auth;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// =====================================================
+// ADD SERVICES
+// =====================================================
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// ADDED: SQLite DbContext registration
 builder.Services.AddDbContext<QuickFixDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("QuickFixDb")));
 
 builder.Services.AddScoped<TicketServices>();
-
-//  Auth/Login services (Session-based)
 builder.Services.AddScoped<AuthService>();
-
-//NEW ADMIN TINGS
 builder.Services.AddScoped<AdminService>();
 
-
-//  Session storage + auth state provider
 builder.Services.AddScoped<ProtectedSessionStorage>();
 builder.Services.AddScoped<SessionAuthStateProvider>();
 
-//  Tell Blazor that our provider IS the AuthenticationStateProvider
 builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
     sp.GetRequiredService<SessionAuthStateProvider>());
 
-
-//  Enables [Authorize] + <AuthorizeView> in Razor Components
 builder.Services.AddAuthorizationCore();
 
 builder.Services.AddScoped<DeviceCatalogService>();
 builder.Services.AddScoped<GradeAPricingService>();
-builder.Services.AddScoped<TicketServices>();
+
+// =====================================================
+// RENDER PORT SETUP
+// =====================================================
 var port = Environment.GetEnvironmentVariable("PORT");
 
 if (!string.IsNullOrWhiteSpace(port))
@@ -50,36 +44,45 @@ if (!string.IsNullOrWhiteSpace(port))
 
 var app = builder.Build();
 
-
 // =====================================================
-// APPLY DATABASE MIGRATIONS ON STARTUP
+// APPLY DATABASE MIGRATIONS + SEED ADMIN USER
 // =====================================================
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<QuickFix.Data.QuickFixDbContext>();
-    db.Database.Migrate();
-
-   
-}
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<QuickFixDbContext>();
+    var auth = scope.ServiceProvider.GetRequiredService<AuthService>();
 
-    var adminEmail = builder.Configuration["ADMIN_EMAIL"];
+    db.Database.Migrate();
 
-    if (!string.IsNullOrWhiteSpace(adminEmail))
+    var adminEmail = "immanuellipscomb11@gmail.com";
+    var adminName = "Admin";
+    var adminPassword = "Admin123!";
+
+    var admin = db.Users.FirstOrDefault(u => u.Email == adminEmail);
+
+    if (admin == null)
     {
-        var user = db.Users.FirstOrDefault(u => u.Email == adminEmail);
+        admin = await auth.RegisterAsync(adminName, adminEmail, adminPassword);
 
-        if (user != null && user.Role != "Admin")
+        if (admin != null)
         {
-            user.Role = "Admin";
+            admin.Role = "Admin";
+            db.SaveChanges();
+        }
+    }
+    else
+    {
+        if (admin.Role != "Admin")
+        {
+            admin.Role = "Admin";
             db.SaveChanges();
         }
     }
 }
 
-// Configure the HTTP request pipeline.
+// =====================================================
+// CONFIGURE HTTP REQUEST PIPELINE
+// =====================================================
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);

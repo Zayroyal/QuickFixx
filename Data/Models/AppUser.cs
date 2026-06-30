@@ -18,5 +18,10 @@
         //NEW
 
         public string Role { get; set; } = "User";
+
+        public static implicit operator AppUser((bool ok, string error, AppUser? user) v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
